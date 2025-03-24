@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios</title>
+    <script defer src="./../js/register.js"></script>
+
+</head>
+<body>
+    <h1>Resgistro</h1>
+    <button type="button" onclick="location.href='/home'">Pagina principal</button>
+    <form id="register-form">
+        <label>Nombre:</label>
+        <input type="text" id= "name" name="name" required>
+        <label>Email:</label>
+        <input type="text" id="email" name="email" required>
+        <label>Password:</label>
+        <input type="text" id="password"name="password" required>
+        <label>Username:</label>
+        <input type="text" id="username" name="username" required>
+        <select name="role" id="role">
+            <option value="profesor" selected>profesor</option>
+            <option value="alumno">alumno</option>
+        </select>
+        <button type="submit">Crear</button>
+    </form>
+    <a href="/users/login">Volver</a>
+</body>
+</html>
