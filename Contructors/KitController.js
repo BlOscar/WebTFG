@@ -7,7 +7,7 @@ exports.see = (async (req,res,next)=>{
     res.render('/users/Profesor/kit.new.ejs');
 })
 exports.addKit = (async (req,res,next)=>{
-    const {necesidades, adminCode, HUCode, CajaCode} = req.body;
+    const {necesidades, adminCode, HUList} = req.body;
     //primero comprobamos si existen en la base de datos, si no existen lanzamos error
     try
     {
@@ -15,25 +15,31 @@ exports.addKit = (async (req,res,next)=>{
             return res.status(400).json({error: "se necesita incluir una necesidad"});
         }
 
-        const temp = [];
-        
-        if(!HUCode || !Array.isArray(HUCode) || HUCode.length===0){
+        //HUCode son las ids de las historias de usuario
+        if(!HUList || !Array.isArray(HUList) || HUList.length===0){
             return res.status(400).json({error: "se necesita incluir mínimo una Historia de Usuario"});
         }
-        if(!CajaCode){
-            return res.status(400).json({error: "se necesita incluir una caja"});
-        }
-        const user = await Admin.findOne({where: adminCode});
+        
+        const user = await Admin.findOne({where: {adminCode : adminCode}});
         if(!user){
             return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
         }
-        const kit = await Kit.create({necesidades, userId: user.id});
-        HUCode.foreach(async element =>{
-            temp.push = await HistoriaUsuario.findOne({where: element});
-            if(!temp){
-                await HistoriaUsuario.create({name: temp.name, description: temp.description, imageUrl: "patata", kitId: kit.id});
-            }
-        });
+        const kit = await Kit.create({necesidades, adminId: user.id});
+        for(let i = 0; i<HUList.length; i++){
+            const y = HUList[i].HUCode;
+            const temp = await HistoriaUsuario.findOne({where: {id: y}});
+            temp.update({kitId: kit.id});
+
+
+        }
+        return res.status(200).json({status: "success", name: kit.id});
+
+        /*HUList.foreach(async (element) =>{
+            temp = await HistoriaUsuario.findOne({where: {id : element.id}});
+            temp.update({kitId: kit.id});
+            //En este caso suponemos que todos han sido creados
+            
+        });*/
         //const CajaCode = await Caja.findOne({where: CajaCode});
 
         

@@ -4,6 +4,10 @@ const {Admin} = require('./Admin');
 //se podria añadir cantidad
 const Kit = sequelize.define('kit',
     {
+        name: 
+        {
+            type: DataTypes.STRING, require: true
+        },
         necesidades: 
         {
             type:DataTypes.STRING, 
@@ -15,7 +19,7 @@ Kit.belongsTo(Admin);
 Admin.hasMany(Kit);
 (async()=>{
     try{
-        await sequelize.sync();
+        await sequelize.sync({force: true});
         console.log("entro");
     }catch(err){
         console.log(err);

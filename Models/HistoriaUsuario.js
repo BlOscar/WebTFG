@@ -36,6 +36,6 @@ const HistoriaUsuario = sequelize.define('HU',{
 HistoriaUsuario.belongsTo(Kit);
 
 (async ()=>{
-    await sequelize.sync({force: true});
+    await sequelize.sync();
 })();
 module.exports =  {HistoriaUsuario, sequelize}; 
