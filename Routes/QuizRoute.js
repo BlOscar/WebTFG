@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const quizController = require('../Contructors/QuizController');
+const quizController = require('../Controllers/QuizController');
 
 router.get('/', quizController.getAllQuizzes);
 router.get('/new', quizController.newQuizForm);

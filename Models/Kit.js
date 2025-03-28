@@ -8,6 +8,7 @@ const Kit = sequelize.define('kit',
         {
             type: DataTypes.STRING, require: true
         },
+        //esto seria un documento pdf
         necesidades: 
         {
             type:DataTypes.STRING, 
@@ -19,7 +20,7 @@ Kit.belongsTo(Admin);
 Admin.hasMany(Kit);
 (async()=>{
     try{
-        await sequelize.sync({force: true});
+        await sequelize.sync();
         console.log("entro");
     }catch(err){
         console.log(err);

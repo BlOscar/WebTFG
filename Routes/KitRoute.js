@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const kitRoute = require('../Contructors/KitController');
+const kitRoute = require('../Controllers/KitController');
 
 router.get('/add', kitRoute.see);
 router.post('/api/add', kitRoute.addKit);

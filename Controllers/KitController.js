@@ -4,10 +4,16 @@ const {HistoriaUsuario} = require('../Models/HistoriaUsuario');
 const {Caja} = require('../Models/CajaLego');
 
 exports.see = (async (req,res,next)=>{
-    res.render('/users/Profesor/kit.new.ejs');
+    try{
+        const HUList = await HistoriaUsuario.findAll({where: {kitId: null}});
+        res.render('users/Profesor/newKit.ejs',{HUList});
+    }catch(err){
+        console.log(err);
+    }
 })
 exports.addKit = (async (req,res,next)=>{
     const {necesidades, adminCode, HUList} = req.body;
+    console.log(req.body);
     //primero comprobamos si existen en la base de datos, si no existen lanzamos error
     try
     {
@@ -26,7 +32,7 @@ exports.addKit = (async (req,res,next)=>{
         }
         const kit = await Kit.create({necesidades, adminId: user.id});
         for(let i = 0; i<HUList.length; i++){
-            const y = HUList[i].HUCode;
+            const y = HUList[i];
             const temp = await HistoriaUsuario.findOne({where: {id: y}});
             temp.update({kitId: kit.id});
 

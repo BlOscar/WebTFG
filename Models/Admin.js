@@ -8,15 +8,23 @@ const Admin = sequelize.define('admin',
         {
             type:DataTypes.STRING, 
             require: true
+        },
+        userId:{
+            type: DataTypes.INTEGER,
+            unique: true
+
         }
     }
 );
-
-Admin.belongsTo(User);
+User.hasOne(Admin, {foreignKey: 'userId'});
+Admin.belongsTo(User, {foreignKey: 'userId'});
 
 (async ()=>{
     try{
         await sequelize.sync();
+        //hay que solventar este error
+        /*const temp = await Admin.findOne({where:{id: 2}});
+        temp.update({userId: 1});*/
     }catch (err) {
         console.log(err);
     }

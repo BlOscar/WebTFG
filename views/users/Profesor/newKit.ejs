@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="/kit.js"></script>
+
+</head>
+<body>
+    <form id="kit-form">
+        <label>Necesidades del cliente:</label>
+        <textarea id= "necesidades" name="necesidades" required></textarea>
+        <br>
+        <label>Historias de usuario</label>
+        <br>
+        <table>
+            <tr>
+                <th>Options</th>
+            </tr>
+            <% HUList.forEach (hu => { %>
+                <tr>
+                    <input type="checkbox" name="patata[]" id="patata[]" value="<%=hu.id%>"><%= hu.name %>
+                </tr>
+            <% }); %>
+            
+            <tr>
+
+            </tr>
+        </table>
+        <br>
+        <button type="submit">Add kit</button>
+
+    </form>
+    
+</ul>
+    
+</body>
+</html>
