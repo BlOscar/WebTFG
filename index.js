@@ -4,6 +4,8 @@ const methodOverride = require('method-override');
 const userRoutes = require('./Routes/userRoute');
 const quizRoutes = require('./Routes/QuizRoute');
 const kitRoutes = require('./Routes/KitRoute');
+const turnoRoutes = require('./Routes/TurnoRoute');
+
 
 const path = require('path');
 const jwt = require('jsonwebtoken');
@@ -30,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/users', userRoutes);
 app.use('/quizzes', quizRoutes);
 app.use('/kits', kitRoutes);
+app.use('/turnos', turnoRoutes);
 app.get('/home', verificarToken, (req,res)=>{
     res.render('home', {user: req.user});
 })

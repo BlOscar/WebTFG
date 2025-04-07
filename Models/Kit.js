@@ -1,3 +1,6 @@
+
+
+
 const { Sequelize, DataTypes, STRING } = require('sequelize');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
 const {Admin} = require('./Admin');
@@ -21,6 +24,7 @@ Admin.hasMany(Kit);
 (async()=>{
     try{
         await sequelize.sync();
+        Kit.update({name: "pimienta"}, {where: {id: 2} })
         console.log("entro");
     }catch(err){
         console.log(err);

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+    <div class="content">
+        <form id="HU-form">
+            <label>nombre</label>
+            <input type="text" id= "name" required>
+            <label>descripcion</label>
+            <input type="text" id= "description" required>
+            <label>imagen</label>
+            <input type="text" id = "imageUrl" required>
+            <label>kit</label>
+            <select name="kit" id="kitId">
+                <% KitList.forEach (kit => { %>
+
+                <option value="<%= kit.id %>" selected><%= kit.name %> </option>
+                <% }) %>
+            </select>
+            <button type="submit">Add HU</button>
+        </form>
+    </div>
+</body>
+<script defer>
+    try{
+    document.getElementById("HU-form").addEventListener("submit", async(e) =>{
+    e.preventDefault();
+    const name = document.getElementById("name").value;
+    const description = document.getElementById("description").value;
+    const imageUrl = document.getElementById("imageUrl").value;
+    const res = await fetch("/kits/api/addHU",{
+        method:"POST",
+        headers:{
+        "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            description: description,
+            imageUrl: imageUrl
+        })
+    });
+    if(res.ok){
+        window.location.href = "/home";
+    }
+})
+    }catch(err){
+        console.log(err);
+        
+    }
+</script>
+</html>
