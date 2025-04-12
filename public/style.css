@@ -1,0 +1,47 @@
+body{
+    margin: 0;
+    background-color: lightblue;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100svh;
+    font-size: larger;
+  }
+  .button-container{
+    width: 100%;
+    background-color: lightgreen;
+  }
+  .text-center{
+    text-align: center;
+  }
+  .text-left{
+    text-align: left;
+  }
+  .form-container{
+    width: 500px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+
+ 
+  }
+  .scroll-container{
+    width: 50%;
+    overflow: auto;
+    max-height: 200px;
+
+  }
+  form{
+    display: flex;
+    flex-direction: column;
+  }
+  .input-form-label{
+    font-size:medium;
+    margin-left:10px;
+  }
+  input, button{
+    padding: 10px 30px;
+    font-size: large;
+    margin: 10px;
+  }

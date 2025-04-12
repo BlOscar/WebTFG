@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
 
 </head>
 <body>
-    <div class="content">
+    <div class="form-container">
         <form id="HU-form">
-            <label>nombre</label>
+            <label for="name" class="input-form-label">nombre</label>
             <input type="text" id= "name" required>
-            <label>descripcion</label>
+            <label for="description" class="input-form-label">descripcion</label>
             <input type="text" id= "description" required>
-            <label>imagen</label>
+            <label for="email" class="input-form-label">imagen</label>
             <input type="text" id = "imageUrl" required>
-            <label>kit</label>
+            <label for="kit" class="input-form-label">kit</label>
             <select name="kit" id="kitId">
                 <% KitList.forEach (kit => { %>
 

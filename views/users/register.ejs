@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuarios</title>
     <script defer src="/register.js"></script>
+    <link rel="stylesheet" href="/style.css">
+
 
 </head>
 <body>
-    <h1>Resgistro</h1>
+    <div class="form-container">
+    <h1 class="text-center">Registro</h1>
     <button type="button" onclick="location.href='/home'">Pagina principal</button>
     <form id="register-form">
         <label>Nombre:</label>
@@ -25,6 +28,9 @@
         </select>
         <button type="submit">Crear</button>
     </form>
+    <p>¿Tienes Cuenta?
     <a href="/users/login">Volver</a>
+</p>
+</div>
 </body>
 </html>

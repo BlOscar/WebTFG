@@ -5,21 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuarios</title>
     <script defer src="/login.js"></script>
+    <link rel="stylesheet" href="/style.css">
+
  
 </head>
 <body>
-    <h1>Login</h1>
+    <div class="form-container">
+    <h1 class="text-center">Login</h1>
     <button type="button" onclick="location.href='/home'">Pagina principal</button>
-
     <form id="login-form">
-        <label>Email:</label>
+        <label for="email" class="input-form-label">Email:</label>
         <input type="text" name="email" id="email" required>
-        <br>
-        <label>Password:</label>
+        <label for="password" class="input-form-label">Password:</label>
         <input type="text" name="password" id="password" required>
         <button type="submit">login</button>
     </form>
+    <p>¿No tienes cuenta?
     <a href= "/users/register">Registro</a>
-    
+</p>
+</div>
 </body>
 </html>

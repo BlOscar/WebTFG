@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <form id="turno-form" class="form-container">
+        <label>Nombre del turno:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label>Fecha de inicio:</label>
+        <input type="date" id="date" name="date" max="3000-01-01" onfocus="this.min = new Date().toISOString().split('T')[0]" required>
+        <input type="time" id="time" name="time" required>
+        <br>
+        <div class="scroll-container">
+
+        <table>
+            <tr>
+                <th>Kits disponibles</th>
+            </tr>
+            <tbody class="scroll-container">
+
+            <% KitList.forEach (hu => { %>
+                <tr>
+                    <td>
+                    <p class="input-form-label">
+                        <input type="checkbox" name="patata[]" id="patata[]" value="<%=hu.id%>"><%= hu.name %>
+                    </p>
+
+                    </td>
+                </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    </div>
+        <br>
+        <button type="submit">Add Turno</button>
+    </form>
+    <script defer>
+        try{
+            document.getElementById("turno-form").addEventListener("submit", async(e) =>{
+                e.preventDefault();
+    const formData = new FormData(e.target);
+    debugger;
+    const kitList = formData.getAll('patata[]');
+    const name = document.getElementById("name").value;
+    const date = new Date(document.getElementById("date").value);
+    const time = document.getElementById("time").value;
+    date.setHours(time.split(':')[0]);
+    date.setMinutes(time.split(':')[1]);
+    const prueba = JSON.parse(JSON.stringify(kitList));
+    const res = await fetch("http://localhost:8000/turnos/api/add",{
+        method:"POST",
+        headers:{
+        "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            kitList: prueba,
+            fechaInicio: date,
+            adminCode: "patata"
+            })
+            });
+            if(res.ok){
+        
+                window.location.href = "/home";
+            }
+            })
+        }catch(err){
+            console.log(err);
+        }
+    </script>
+</ul>
+
+</body>
+</html>

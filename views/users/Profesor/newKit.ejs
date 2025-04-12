@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer src="/kit.js"></script>
+    <link rel="stylesheet" href="/style.css">
 
 </head>
 <body>
-    <form id="kit-form">
+
+    <form id="kit-form" class="form-container">
         <label>Nombre del kit:</label>
         <input type="text" id="name" name="name" required>
         <br>
@@ -16,20 +18,29 @@
         <br>
         <label>Historias de usuario</label>
         <br>
-        <table>
+        <div class="scroll-container">
+
+        <table >
             <tr>
                 <th>Options</th>
             </tr>
+            <tbody class="scroll-container">
             <% HUList.forEach (hu => { %>
                 <tr>
-                    <input type="checkbox" name="patata[]" id="patata[]" value="<%=hu.id%>"><%= hu.name %>
+                    <td>
+                        <p class="input-form-label">
+                            <input type="checkbox" name="patata[]" id="patata[]" value="<%=hu.id%>"><%= hu.name %>
+                            </p>
+                    </td>
+                    
                 </tr>
-            <% }); %>
-            
-            <tr>
 
-            </tr>
+            <% }); %>
+    </tbody>
+            
         </table>
+    </div>
+
         <br>
         <label>Nombre de Caja:</label>
         <input type="text" id="nameCaja" name="nameCaja" required>
