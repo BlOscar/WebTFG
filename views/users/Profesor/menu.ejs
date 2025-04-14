@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <div class="container">
+        <section style="margin: 10 px;padding: 0.15px 10px; border: 1px solid grey; border-radius: 16px">
+            <h3>Lista de Turnos: </h5>
+            <% turno.forEach(t =>{ %>
+                <a href="/turnos/<%= t.id %>"><h4>Turno: <%= t.name %></h6></a>
+                <p>Fecha Inicio:<h6 name="patata[]" id="start-time<%= t.id%>"><%= t.fechaInicio.toISOString() %></h6></p>
+                
+
+            <% })%>
+        </section>
+    </div>
+    <script>
+        function getHora(){
+            var turno = <%- JSON.stringify(turno) %>;
+            turno.forEach(p =>{
+                const time = document.getElementById(`start-time${p.id}`).textContent;
+                let prueba = new Date(time);
+                document.getElementById(`start-time${p.id}`).textContent = "Día: " + prueba.toLocaleDateString('es-ES') + "\tHora: "+ prueba.toLocaleTimeString('es-ES');
+            
+            })
+            const time = document.getElementById("start-time").textContent;
+            console.log(time.textContent);
+             
+        }
+        getHora();
+    </script>
+</body>
+</html>

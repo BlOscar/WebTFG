@@ -23,11 +23,11 @@
             </tr>
             <tbody class="scroll-container">
 
-            <% KitList.forEach (hu => { %>
+            <% KitList.forEach (kit => { %>
                 <tr>
                     <td>
                     <p class="input-form-label">
-                        <input type="checkbox" name="patata[]" id="patata[]" value="<%=hu.id%>"><%= hu.name %>
+                        <input type="checkbox" name="kitList[]" id="kitList[]" value="<%=kit.id%>"><%= kit.name %>
                     </p>
 
                     </td>
@@ -45,7 +45,7 @@
                 e.preventDefault();
     const formData = new FormData(e.target);
     debugger;
-    const kitList = formData.getAll('patata[]');
+    const kitList = formData.getAll('kitList[]');
     const name = document.getElementById("name").value;
     const date = new Date(document.getElementById("date").value);
     const time = document.getElementById("time").value;

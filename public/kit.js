@@ -2,7 +2,7 @@ document.getElementById("kit-form").addEventListener("submit", async (e) =>{
     e.preventDefault();
     const id = document.getElementById("necesidades").value;
     const formData = new FormData(e.target);
-    const huList = formData.getAll('patata[]');
+    const huList = formData.getAll('huList[]');
     const nameCaja = document.getElementById("nameCaja").value;
     const idProduct = document.getElementById("idProduct").value;
     const name = document.getElementById("name").value;
@@ -26,3 +26,26 @@ document.getElementById("kit-form").addEventListener("submit", async (e) =>{
         window.location.href = "/home";
     }
 });
+
+document.getElementById("HU-form").addEventListener("submit", async(e) =>{
+    e.preventDefault();
+    const nameHU = document.getElementById("nameHU").value;
+    debugger;
+    const description = document.getElementById("description").value;
+    const imageUrl = document.getElementById("imageUrl").value;
+    const res = await fetch("/kits/api/addHU",{
+        method:"POST",
+        headers:{
+        "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+            name: nameHU,
+            description: description,
+            imageUrl: imageUrl
+        })
+    });
+    if(res.ok){
+        
+    }
+})
+    

@@ -8,8 +8,8 @@
 
 </head>
 <body>
-
-    <form id="kit-form" class="form-container">
+    <div class="form-container">
+    <form id="kit-form" >
         <label>Nombre del kit:</label>
         <input type="text" id="name" name="name" required>
         <br>
@@ -18,7 +18,9 @@
         <br>
         <label>Historias de usuario</label>
         <br>
+        
         <div class="scroll-container">
+
 
         <table >
             <tr>
@@ -29,7 +31,7 @@
                 <tr>
                     <td>
                         <p class="input-form-label">
-                            <input type="checkbox" name="patata[]" id="patata[]" value="<%=hu.id%>"><%= hu.name %>
+                            <input type="checkbox" name="huList[]" id="huList[]" value="<%=hu.id%>"><%= hu.name %>
                             </p>
                     </td>
                     
@@ -40,6 +42,31 @@
             
         </table>
     </div>
+    
+    <script>
+        function closeManual(){
+            document.getElementById("addHUmanual").style = "";
+            document.getElementById("addHUmanual_on").style = "display: none;";
+            document.getElementById("addHu").style = "display: none;";
+
+        }
+        function addManual(){
+            document.getElementById("addHUmanual").style = "display: none;";
+            document.getElementById("addHUmanual_on").style = "";
+            document.getElementById("addHu").style = "";
+
+        }
+        try{
+            document.getElementById("addHUmanual").addEventListener("button",async (e)=>{
+                e.preventDefault();
+                debugger;
+                document.getElementById("addHUmanual").style = "display: none;";
+
+            })
+        }catch(err){
+            console.log(err);
+        }
+    </script>
 
         <br>
         <label>Nombre de Caja:</label>
@@ -49,8 +76,21 @@
         <button type="submit">Add kit</button>
 
     </form>
+    <button type="button" id="addHUmanual" onclick="addManual()" style>Add HU</button>
+        <button type="button" id="addHUmanual_on" onclick="closeManual()"  style="display: none;">Add HUJ</button>
+        <div id="addHu" style="display: none;">
+        <form id="HU-form">
+            <label for="nameHU" class="input-form-label">nombre</label>
+            <input type="text" id= "nameHU" required>
+            <label for="description" class="input-form-label">descripcion</label>
+            <input type="text" id= "description" required>
+            <label for="email" class="input-form-label">imagen</label>
+            <input type="text" id = "imageUrl" required>
+            <button type="submit">addHU</button>
+        </form>
+    </div>
     
 </ul>
-
+</div>
 </body>
 </html>

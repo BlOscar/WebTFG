@@ -26,6 +26,17 @@ body{
 
  
   }
+  .user-profile{
+    column-count: 2;
+  }
+
+  .container{
+    width: 75%;
+    align-content: center;
+    background-color: bisque;
+    height: 75%;
+    margin: 10px 30px;
+  }
   .scroll-container{
     width: 50%;
     overflow: auto;

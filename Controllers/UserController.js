@@ -1,11 +1,13 @@
 const {User} = require('../Models/User');
 const {Admin} = require('../Models/Admin');
 const {Alumno} = require('../Models/Alumno');
+const {Turno} = require('../Models/Turno');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const dotenv = require('dotenv');
 const path = require('path');
+const { Op } = require('sequelize');
 
 
 
@@ -47,6 +49,10 @@ exports.see = (req,res)=>{
 };
 exports.newUserForm = (req, res) => {
     res.render('users/register');
+};
+exports.getMenu = async (req, res) => {
+    const turno = await Turno.findAll({where: {fechaInicio: {[Op.gt]: Date.now()}}});
+    res.render('users/Profesor/menu', {turno});
 };
 
 exports.login = (async (req,res,next) =>{

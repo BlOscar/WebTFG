@@ -37,8 +37,5 @@ HistoriaUsuario.belongsTo(Kit);
 
 (async ()=>{
     await sequelize.sync();
-    const temp = await HistoriaUsuario.findOne({where: {name: null}});
-    
-    temp.update({name: "pimient"});
 })();
 module.exports =  {HistoriaUsuario, sequelize}; 

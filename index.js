@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const userRoutes = require('./Routes/userRoute');
-const quizRoutes = require('./Routes/QuizRoute');
 const kitRoutes = require('./Routes/KitRoute');
 const turnoRoutes = require('./Routes/TurnoRoute');
 
@@ -30,7 +29,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rutas
 app.use('/users', userRoutes);
-app.use('/quizzes', quizRoutes);
 app.use('/kits', kitRoutes);
 app.use('/turnos', turnoRoutes);
 app.get('/home', verificarToken, (req,res)=>{
