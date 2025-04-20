@@ -1,7 +1,10 @@
 const {User} = require('../Models/User');
-const {Admin} = require('../Models/Admin');
-const {Alumno} = require('../Models/Alumno');
-const {Turno} = require('../Models/Turno');
+const {Teacher} = require('../Models/Teacher');
+const {Student} = require('../Models/Student');
+const {Turn} = require('../Models/Turn');
+const {Sprint} = require('../Models/Sprint');
+const {Result} = require('../Models/Result');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -22,11 +25,11 @@ exports.register = (async (req,res,next) =>{
                 const handlePassword = await bcrypt.hash(password,10);
                 const user = await User.create({username,name,email,password: handlePassword, role});
                 if(role === 'profesor'){
-                    await Admin.create({adminCode: username,
+                    await Teacher.create({teacherName: username,
                         userId: user.id,
                     });
                 }else{
-                    await Alumno.create({alumnoCode: username,
+                    await Student.create({studentName: username,
                         userId: user.id,
                     });
                 }
@@ -51,7 +54,7 @@ exports.newUserForm = (req, res) => {
     res.render('users/register');
 };
 exports.getMenu = async (req, res) => {
-    const turno = await Turno.findAll({where: {fechaInicio: {[Op.gt]: Date.now()}}});
+    const turno = await Turn.findAll({where: {startDate: {[Op.gt]: Date.now()}}});
     res.render('users/Profesor/menu', {turno});
 };
 

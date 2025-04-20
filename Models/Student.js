@@ -2,17 +2,17 @@ const { Sequelize, DataTypes, STRING } = require('sequelize');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
 const {User} = require('./User');
 
-const Alumno = sequelize.define('alumno',
+const Student = sequelize.define('student',
     {
-        alumnoCode: 
+        studentName: 
         {
             type:DataTypes.STRING, 
             require: true
         }
     }
 );
-
-Alumno.belongsTo(User);
+User.hasOne(Student, {foreignKey: 'userId'});
+Student.belongsTo(User);
 
 (async ()=>{
     try{
@@ -21,4 +21,4 @@ Alumno.belongsTo(User);
         console.log(err);
     }
 })();
-module.exports =  {Alumno, sequelize}; 
+module.exports =  {Student, sequelize}; 

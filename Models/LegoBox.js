@@ -1,13 +1,14 @@
 const { Sequelize, DataTypes, STRING } = require('sequelize');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
 const {Kit} = require('./Kit');
+const {ManualBox} = require('./ManualBox');
 
-const CajaLego = sequelize.define('cajaLego',{
+const LegoBox = sequelize.define('legoBox',{
     name: {
         type: DataTypes.STRING, require: true
 
     },
-    idProduct: {
+    productCode: {
         type: DataTypes.STRING, require: true
     },
     kitId: {
@@ -15,8 +16,10 @@ const CajaLego = sequelize.define('cajaLego',{
     }
 });
 /*un kit puede tener una o mas cajas pero una caja solo puede estar en un kit*/
-CajaLego.belongsTo(Kit, {foreignKey: 'kitId'});
-Kit.hasOne(CajaLego, {foreignKey: 'kitId'});
+LegoBox.belongsTo(Kit, {foreignKey: 'kitId'});
+Kit.hasOne(LegoBox, {foreignKey: 'kitId'});
+ManualBox.belongsTo(LegoBox);
+LegoBox.hasMany(ManualBox);
 
 (async()=>{
     try{
@@ -26,5 +29,4 @@ Kit.hasOne(CajaLego, {foreignKey: 'kitId'});
         console.log(err);
     }
 })();
-
-module.exports = {CajaLego,sequelize};
+module.exports = {LegoBox,sequelize};

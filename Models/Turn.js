@@ -15,19 +15,18 @@ uno o mas turnos, debido a que un alumno puede puede hacer la actividad varias v
 */
 const { Sequelize, DataTypes, STRING } = require('sequelize');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
-const {Admin} = require('./Admin');
-const {Alumno} = require('./Alumno');
+const {Teacher} = require('./Teacher');
+const {Student} = require('./Student');
 const {Kit} = require('./Kit');
-const {Equipo} = require('./Equipo');
 //se podria añadir cantidad
-const Turno = sequelize.define('turno',
+const Turn = sequelize.define('turno',
     {
         name: 
         {
             type: DataTypes.STRING, require: true
         },
         //esto seria un documento pdf
-        fechaInicio: 
+        startDate: 
         {
             type:DataTypes.DATE, 
             require: true
@@ -35,12 +34,14 @@ const Turno = sequelize.define('turno',
     }
 );
 
-Turno.belongsToMany(Alumno, {through: 'TurnoAlumno'});
-Alumno.belongsToMany(Turno, {through: 'TurnoAlumno'});
-Turno.belongsTo(Admin);
-Admin.hasMany(Turno);
-Turno.belongsToMany(Kit, {through: 'TurnoKit'});
-Kit.belongsToMany(Turno, {through: 'TurnoKit'});
+Turn.belongsToMany(Student, {through: 'TurnStudent'});
+Student.belongsToMany(Turn, {through: 'TurnStudent'});
+
+Turn.belongsTo(Teacher);
+Teacher.hasMany(Turn);
+
+Turn.belongsToMany(Kit, {through: 'TurnKit'});
+Kit.belongsToMany(Turn, {through: 'TurnKit'});
 (async()=>{
     try{
         await sequelize.sync();
@@ -49,4 +50,4 @@ Kit.belongsToMany(Turno, {through: 'TurnoKit'});
         console.log(err);
     }
 })();
-module.exports =  {Turno, sequelize}; 
+module.exports =  {Turn, sequelize}; 
