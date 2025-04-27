@@ -36,6 +36,10 @@ body{
     background-color: bisque;
     height: 75%;
     margin: 10px 30px;
+    padding: 10px;
+  }
+  h6{
+    margin: 10px;
   }
   .scroll-container{
     width: 50%;

@@ -14,16 +14,22 @@ document.getElementById("kit-form").addEventListener("submit", async (e) =>{
         },
         body: JSON.stringify({
             name: name,
-            adminCode: "patata",
-            necesidades: id,
+            teacherName: "patata",
+            objetive: id,
             HUList: prueba,
-            nameCaja: nameCaja,
+            nameBox: nameCaja,
             idProduct: idProduct
             })
             });
     if(res.ok){
         
         window.location.href = "/home";
+    }else{
+        const favIcon = document.getElementById('dialog-error');
+        debugger;
+        const response = await res.json();
+        favIcon.textContent = `There was an error during the creation: ${ response.error}`;
+        favIcon.showModal();
     }
 });
 
@@ -45,7 +51,9 @@ document.getElementById("HU-form").addEventListener("submit", async(e) =>{
         })
     });
     if(res.ok){
-        
+        location.reload();
+    }else{
+
     }
 })
     

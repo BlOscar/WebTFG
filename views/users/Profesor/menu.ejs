@@ -12,7 +12,7 @@
             <h3>Lista de Turnos: </h5>
             <% turno.forEach(t =>{ %>
                 <a href="/turnos/<%= t.id %>/show"><h4>Turno: <%= t.name %></h6></a>
-                <p>Fecha Inicio:<h6 name="patata[]" id="start-time<%= t.id%>"><%= t.fechaInicio.toISOString() %></h6></p>
+                <p>Fecha Inicio:<h6 name="patata[]" id="start-time<%= t.id%>"><%= t.startDate.toISOString() %></h6></p>
                 
 
             <% })%>
@@ -26,9 +26,7 @@
                 let prueba = new Date(time);
                 document.getElementById(`start-time${p.id}`).textContent = "Día: " + prueba.toLocaleDateString('es-ES') + "\tHora: "+ prueba.toLocaleTimeString('es-ES');
             
-            })
-            const time = document.getElementById("start-time").textContent;
-            console.log(time.textContent);
+            });
              
         }
         getHora();

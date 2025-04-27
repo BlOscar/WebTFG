@@ -4,7 +4,7 @@ const turnoRoute = require('../Controllers/TurnoController');
 
 router.post('/api/add', turnoRoute.createTurno);
 router.get('/addTurno', turnoRoute.seeCreateTurno);
-//router.get('/:id/show', turnoRoute.seeTurno);
+router.get('/:id/show', turnoRoute.seeTurno);
 
 
 module.exports = router;

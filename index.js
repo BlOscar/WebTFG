@@ -23,6 +23,7 @@ app.use(methodOverride('_method', { methods: ["POST", "GET"] }));
 app.set('view engine', 'ejs');
 app.set('views');
 app.use(express.static("public"));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -39,6 +40,8 @@ app.get('/home', verificarToken, (req,res)=>{
 app.get('/', (req, res) => {
     res.redirect('/users/login');
 });
+
+
 
 //middleware para manejar tokens
 function verificarToken(req,res,next){

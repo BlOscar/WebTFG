@@ -8,6 +8,8 @@
 
 </head>
 <body>
+    <dialog id="dialog-error">
+    </dialog>
     <div class="form-container">
     <form id="kit-form" >
         <label>Nombre del kit:</label>
@@ -18,10 +20,10 @@
         <br>
         <label>Historias de usuario</label>
         <br>
-        
+        <% if(HUList.length != 0){ %>
         <div class="scroll-container">
 
-
+        
         <table >
             <tr>
                 <th>Options</th>
@@ -42,6 +44,9 @@
             
         </table>
     </div>
+        <% } else { %>
+            <h6>Necesitas añadir una HU</h6>
+            <% } %>
     
     <script>
         function closeManual(){
@@ -71,7 +76,7 @@
         <br>
         <label>Nombre de Caja:</label>
         <input type="text" id="nameCaja" name="nameCaja" required>
-        <label>Numero de caja:</label>
+        <label>Codigo de caja:</label>
         <input type="number" id="idProduct" name="idProduct" required>
         <button type="submit">Add kit</button>
 

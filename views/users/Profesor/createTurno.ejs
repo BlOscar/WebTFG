@@ -7,6 +7,9 @@
 
 </head>
 <body>
+    <dialog id="dialog-error">
+
+    </dialog>
     <form id="turno-form" class="form-container">
         <label>Nombre del turno:</label>
         <input type="text" id="name" name="name" required>
@@ -60,13 +63,18 @@
         body: JSON.stringify({
             name: name,
             kitList: prueba,
-            fechaInicio: date,
-            adminCode: "patata"
+            startDate: date,
+            teacherName: "patata"
             })
             });
             if(res.ok){
         
                 window.location.href = "/home";
+            }else{
+                const favIcon = document.getElementById('dialog-error');
+                const response = await res.json();
+                favIcon.textContent = `There was an error during the creation: ${ response.error}`;
+                favIcon.showModal();
             }
             })
         }catch(err){

@@ -19,6 +19,22 @@ exports.seeHU = (async (req,res,next)=>{
         console.log(err);
     }
 })
+exports.seeKit = (async (req,res,next)=>{
+    const kitId = req.params.id;
+    try{
+        const kit = await Kit.findOne({where: {id: kitId}});
+        if(!kit){
+            return res.status(404).json({error: "este kit no existe"});
+        }
+        const HUList = await HU.findAll({where: {kitId: kitId}});
+        const boxLego = await LegoBox.findOne({where: {kitId: kitId}});
+
+            res.render('users/Profesor/menuKit.ejs', {kit, HUList, boxLego});
+        
+    }catch(err){
+        console.log(err);
+    }
+})
 exports.addKit = (async (req,res,next)=>{
     const {name, objetive, teacherName, HUList, nameBox, idProduct} = req.body;
     console.log(req.body);
@@ -59,10 +75,11 @@ exports.addKit = (async (req,res,next)=>{
 });
 
 exports.addHU = (async (req,res,next)=>{
-    const {name,description,imageUrl, kitId} = req.body;
+    const {name,description, kitId} = req.body;
+    const imageUrl = req.file.path;
     try{
-        const HU = await HU.create({name,description,imageUrl,kitId});
-        return res.status(200).json({status: "success", name: HU.name, description: HU.description, imageUrl: HU.imageUrl});
+        const hu = await HU.create({name,description,imageUrl,kitId});
+        return res.status(200).json({status: "success", name: hu.name, description: hu.description, imageUrl: hu.imageUrl});
     }catch(err){
         console.log(err);
     }

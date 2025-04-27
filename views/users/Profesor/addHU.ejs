@@ -8,13 +8,13 @@
 </head>
 <body>
     <div class="form-container">
-        <form id="HU-form">
+        <form id="HU-form" enctype="multipart/form-data">
             <label for="name" class="input-form-label">nombre</label>
             <input type="text" id= "name" required>
             <label for="description" class="input-form-label">descripcion</label>
             <input type="text" id= "description" required>
             <label for="email" class="input-form-label">imagen</label>
-            <input type="text" id = "imageUrl" required>
+            <input type="file" accept="image/png" id = "imageUrl" required>
             <label for="kit" class="input-form-label">kit</label>
             <select name="kit" id="kitId">
                 <% KitList.forEach (kit => { %>
@@ -32,17 +32,21 @@
     e.preventDefault();
     const name = document.getElementById("name").value;
     const description = document.getElementById("description").value;
-    const imageUrl = document.getElementById("imageUrl").value;
+    const imageUrl = document.getElementById("imageUrl").files[0];
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("imageUrl", imageUrl); // Aquí agregamos el archivo
+    formData.append("kitId", document.getElementById("kitId").value); // Agregar el kitId
+
+        debugger;
     const res = await fetch("/kits/api/addHU",{
         method:"POST",
         headers:{
-        "Content-Type":"application/json"
+        
         },
-        body: JSON.stringify({
-            name: name,
-            description: description,
-            imageUrl: imageUrl
-        })
+        body: formData
     });
     if(res.ok){
         window.location.href = "/home";

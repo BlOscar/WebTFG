@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    
+
+    <div class="container">
+        <h2>Kit:</h2>
+        <h5>Nombre: <%= kit.name %></h5>
+        <h5>Necesidades: <%= kit.objetive %></h5>
+        <h5>Historias de Usuario: </h5>
+
+        <div class="scroll-container" >
+            <table>
+                <tbody>
+    
+                <% HUList.forEach (hu => { %>
+                    <tr>
+                        <td>
+    
+                        <h6>Nombre: <%= hu.name %></h6>
+                        <h6>Necesidades: <%= hu.description%></h6>
+                        <img src="/<%=hu.imageUrl%>" />
+
+                        </td>
+                    </tr>
+                <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <h5>Nombre de Caja: <%= boxLego.name%></h5>
+    </div>
+</body>
