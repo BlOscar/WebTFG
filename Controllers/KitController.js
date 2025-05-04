@@ -2,6 +2,8 @@ const {Kit} = require('../Models/Kit');
 const {Teacher} = require('../Models/Teacher');
 const {HU} = require('../Models/HistoriaUsuario');
 const {LegoBox} = require('../Models/LegoBox');
+const fs = require('fs');
+const { ManualBox } = require('../Models/ManualBox');
 
 exports.see = (async (req,res,next)=>{
     try{
@@ -36,7 +38,7 @@ exports.seeKit = (async (req,res,next)=>{
     }
 })
 exports.addKit = (async (req,res,next)=>{
-    const {name, objetive, teacherName, HUList, nameBox, idProduct} = req.body;
+    const {name, objetive, teacherName} = req.body;
     console.log(req.body);
     //primero comprobamos si existen en la base de datos, si no existen lanzamos error
     try
@@ -44,27 +46,12 @@ exports.addKit = (async (req,res,next)=>{
         if(!objetive || objetive == ""){
             return res.status(400).json({error: "se necesita incluir una necesidad"});
         }
-        if(!nameBox || !idProduct){
-            return res.status(400).json({error: "se necesita incluir una Caja de Lego"});
-        }
-
-        //HUCode son las ids de las historias de usuario
-        if(!HUList || !Array.isArray(HUList) || HUList.length===0){
-            return res.status(400).json({error: "se necesita incluir mínimo una Historia de Usuario"});
-        }
         
         const user = await Teacher.findOne({where: {teacherName : teacherName}});
         if(!user){
             return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
         }
         const kit = await Kit.create({name, objetive, teacherId: user.id});
-        await LegoBox.create({name: nameBox, productId: idProduct, kitId: kit.id});
-        
-        for(let i = 0; i<HUList.length; i++){
-            const y = HUList[i];
-            const temp = await HU.findOne({where: {id: y}});
-            temp.update({kitId: kit.id});
-        }
         return res.status(200).json({status: "success", name: kit.id});
         
     }catch(err){
@@ -83,4 +70,42 @@ exports.addHU = (async (req,res,next)=>{
     }catch(err){
         console.log(err);
     }
+});
+
+exports.seeBox = (async (req,res,next)=>{
+    try{
+        const KitList = await Kit.findAll();
+        res.render('users/Profesor/addBox.ejs',{KitList});
+    }catch(err){
+        console.log(err);
+    }
+});
+
+exports.addBox = (async (req,res,next)=>{
+    const {name, productId, kitId} = req.body;
+    const manualUrl = req.files;
+    LegoBox.findOrCreate({
+        where: {name: name, productCode : productId, kitId: kitId},
+        defaults: {name, productCode: productId, kitId}
+    }).then(async ([box, isCreated])=>{
+        if(isCreated){
+            const manuals = ManualBox.findAll({where: {legoBoxId: box.id}})
+            let temp;
+            for(let i = 0; i< manualUrl.length; i++){
+                await ManualBox.create({name: `${name}-${i}`, urlPDF: manualUrl[i].path});
+            };
+            return res.status(200).json({status: "success"});
+        }
+        const error = new Error('Esta caja de Lego ya existe');
+        error.statusCode = 409; //Conflicto
+        throw error;
+    }).catch(err=>{
+        console.log(err);
+        manualUrl.forEach(element => {
+            fs.unlink(element.path, error=>{
+                if(error) console.log('error al eliminar', error);
+            });
+        });
+        return res.status(err.statusCode || 500).send();
+    })
 });

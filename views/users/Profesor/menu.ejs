@@ -7,17 +7,28 @@
 
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="justify-content: center;">
+    <div class="container-grid">
         <section style="margin: 10 px;padding: 0.15px 10px; border: 1px solid grey; border-radius: 16px">
-            <h3>Lista de Turnos: </h5>
+            <h3>Lista de Turnos: </h3>
+            <div class="scroll-container">
             <% turno.forEach(t =>{ %>
                 <a href="/turnos/<%= t.id %>/show"><h4>Turno: <%= t.name %></h6></a>
                 <p>Fecha Inicio:<h6 name="patata[]" id="start-time<%= t.id%>"><%= t.startDate.toISOString() %></h6></p>
                 
 
             <% })%>
+        </div>
         </section>
     </div>
+    <div class="container-grid" style="flex-direction: column ;padding: 10px;">
+        <a href="/kits/add" class="btn-redirect">Añadir Kit</a>
+        <a href="/kits/menu" class="btn-redirect">Ver Kits</a>
+        <a href="/turnos/addTurno" class="btn-redirect">Añadir Turno</a>
+        <a href="/kits/add" class="btn-redirect">Ver Turnos Pasados</a>
+
+    </div>
+</div>
     <script>
         function getHora(){
             var turno = <%- JSON.stringify(turno) %>;

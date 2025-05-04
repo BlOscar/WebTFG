@@ -12,7 +12,7 @@ const LegoBox = sequelize.define('legoBox',{
         type: DataTypes.STRING, require: true
     },
     kitId: {
-        type: DataTypes.INTEGER, unique: true
+        type: DataTypes.INTEGER, unique:false
     }
 });
 /*un kit puede tener una o mas cajas pero una caja solo puede estar en un kit*/
@@ -23,7 +23,7 @@ LegoBox.hasMany(ManualBox);
 
 (async()=>{
     try{
-        await sequelize.sync();
+        await sequelize.sync({alter:true});
         
     }catch(err){
         console.log(err);

@@ -37,12 +37,27 @@ body{
     height: 75%;
     margin: 10px 30px;
     padding: 10px;
+    display: flex;
+  }
+  .container-grid{
+    display:grid;
   }
   h6{
     margin: 10px;
   }
+  a.btn-redirect{
+    padding: 1px 6px;
+    border: 1px outset buttonborder;
+    border-radius: 3px;
+    color: white;
+    background-color: salmon;
+    text-decoration: none;
+    margin:5px;
+    text-align: center;
+
+  }
   .scroll-container{
-    width: 50%;
+    width: 100%;
     overflow: auto;
     max-height: 200px;
 

@@ -108,7 +108,7 @@ exports.createTurno = (async (req,res,next) =>{
             return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
         }
         let kit;
-        var teams = [];
+        let teams = [];
         for(let i = 0; i<kitList.length; i++){
             kit = await Kit.findOne({where: {id: kitList[i]}});
             if(!kit){

@@ -16,6 +16,11 @@ const Kit = sequelize.define('kit',
         {
             type:DataTypes.STRING, 
             require: true
+        },
+        quantity: {
+            type:DataTypes.INTEGER,
+            require: true,
+            defaultValue: 1
         }
     }
 );

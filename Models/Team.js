@@ -37,7 +37,7 @@ const Team = sequelize.define('team',{
         type: DataTypes.STRING, require: true
     },
     kitId: {
-        type: DataTypes.INTEGER, unique: true
+        type: DataTypes.INTEGER
     },
 
 });
