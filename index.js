@@ -15,7 +15,8 @@ const dotenv = require('dotenv');
 
 
 const app = express();
-
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 // Configurar middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

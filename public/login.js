@@ -14,8 +14,14 @@ document.getElementById("login-form").addEventListener("submit",async (e)=>{
             email,
             password
         })
-    });
-if(res.ok){
-window.location.href = "/home";  }
+    }).then(res => res.json()).then(response=>{
+        if(response.tokenId){
+            window.location.href = "/home";  
+
+
+        }else{
+            console.error('no se recibio el token');
+        }
+    })
 })
 

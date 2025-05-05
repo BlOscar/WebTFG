@@ -71,20 +71,11 @@ exports.login = (async (req,res,next) =>{
         if(!isMatch){
             return res.status(401).json({error: "unauthorized"});
         }
-            const token = jwt.sign({email: user.email}, 'secret');
-            const envPath = path.resolve(process.cwd() + "/.vscode/", '.env');
-
-            const envContent = fs.readFileSync(envPath, 'utf8');
-
-            const envConfig = dotenv.parse(envContent);
-
-            if(envConfig.TokenId){
-                
-                fs.appendFileSync('./.vscode/.env', `\nTokenId=${token}`);
-            }
+            const token = jwt.sign({email: user.email, userId: user.id}, 'secret', {expiresIn: '2h'});
+            res.cookie('token', 'Bearer ' + token, { httpOnly: true });
             res.status(200).json({
                 status: "success",
-                data: [], tokenId: token, message: "Login exitoso"});
+                tokenId:'Bearer ' + token, message: "Login exitoso"});
                 //res.redirect("../index");
 
         
