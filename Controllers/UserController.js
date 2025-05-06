@@ -1,6 +1,4 @@
 const {User} = require('../Models/User');
-const {Teacher} = require('../Models/Teacher');
-const {Student} = require('../Models/Student');
 const {Turn} = require('../Models/Turn');
 const {Sprint} = require('../Models/Sprint');
 const {Result} = require('../Models/Result');
@@ -16,23 +14,14 @@ const { Op } = require('sequelize');
 
 exports.register = (async (req,res,next) =>{
     try{
-        const {username, name, email, password, role} = req.body;
+        const {username, name, email, password} = req.body;
         //Comprobamos si existe en este contexto
         let temp = await User.findOne({where: {email}});
         if(!temp){
             temp = await User.findOne({where: {username}});
             if(!temp){
                 const handlePassword = await bcrypt.hash(password,10);
-                const user = await User.create({username,name,email,password: handlePassword, role});
-                if(role === 'profesor'){
-                    await Teacher.create({teacherName: username,
-                        userId: user.id,
-                    });
-                }else{
-                    await Student.create({studentName: username,
-                        userId: user.id,
-                    });
-                }
+                const user = await User.create({username,name,email,password: handlePassword});
                 console.log(`Usuario creado con email ${email} y username: ${username}`);
                 res.redirect('/');
             }else

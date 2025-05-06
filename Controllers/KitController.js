@@ -1,5 +1,5 @@
 const {Kit} = require('../Models/Kit');
-const {Teacher} = require('../Models/Teacher');
+const {User} = require('../Models/User');
 const {HU} = require('../Models/HistoriaUsuario');
 const {LegoBox} = require('../Models/LegoBox');
 const fs = require('fs');
@@ -47,11 +47,11 @@ exports.addKit = (async (req,res,next)=>{
             return res.status(400).json({error: "se necesita incluir una necesidad"});
         }
         
-        const user = await Teacher.findOne({where: {teacherName : teacherName}});
+        const user = await User.findOne({where: {username : teacherName}});
         if(!user){
             return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
         }
-        const kit = await Kit.create({name, objetive, teacherId: user.id});
+        const kit = await Kit.create({name, objetive, userId: user.id});
         return res.status(200).json({status: "success", name: kit.id});
         
     }catch(err){

@@ -1,7 +1,7 @@
 const {Turn} = require("../Models/Turn");
 const {Kit} = require("./../Models/Kit");
-const {Teacher} = require("../Models/Teacher");
-const {Student} = require("../Models/Student");
+const {User} = require("../Models/User");
+
 
 const {Team} = require("../Models/Team");
 const { Op } = require('sequelize');
@@ -29,7 +29,7 @@ exports.seeTurno = (async (req,res,next)=>{
             model: Turn,
             where: {id: idTurn}
         }});
-        const students = await Student.findAll({include:{
+        const students = await User.findAll({include:{
             model: Turn,
             where: {id: idTurn}
         }});
@@ -103,7 +103,7 @@ exports.createTurno = (async (req,res,next) =>{
         if(!startDate || startDate <= new Date()){
             return res.status(400).json({error: "se tiene que añadir una fecha valida"});
         }
-        const user = await Teacher.findOne({where: {teacherName : teacherName}});
+        const user = await User.findOne({where: {username : teacherName}});
         if(!user){
             return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
         }
@@ -121,7 +121,7 @@ exports.createTurno = (async (req,res,next) =>{
             });
 
         }
-        const turn = await Turn.create({name, startDate, adminId: user.id});
+        const turn = await Turn.create({name, startDate, userId: user.id});
         await turn.addKits(kitList);
         teams.forEach(e=>{
             e.turnId = turn.id;

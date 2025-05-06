@@ -3,7 +3,7 @@
 
 const { Sequelize, DataTypes, STRING } = require('sequelize');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
-const {Teacher} = require('./Teacher');
+const {User} = require('./User');
 //se podria añadir cantidad
 const Kit = sequelize.define('kit',
     {
@@ -24,8 +24,8 @@ const Kit = sequelize.define('kit',
         }
     }
 );
-Kit.belongsTo(Teacher);
-Teacher.hasMany(Kit);
+Kit.belongsTo(User);
+User.hasMany(Kit);
 (async()=>{
     try{
         await sequelize.sync();

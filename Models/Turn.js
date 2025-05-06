@@ -15,8 +15,7 @@ uno o mas turnos, debido a que un alumno puede puede hacer la actividad varias v
 */
 const { Sequelize, DataTypes, STRING } = require('sequelize');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
-const {Teacher} = require('./Teacher');
-const {Student} = require('./Student');
+const {User} = require('./User');
 const {Kit} = require('./Kit');
 //se podria añadir cantidad
 const Turn = sequelize.define('turno',
@@ -34,11 +33,11 @@ const Turn = sequelize.define('turno',
     }
 );
 
-Turn.belongsToMany(Student, {through: 'TurnStudent'});
-Student.belongsToMany(Turn, {through: 'TurnStudent'});
+Turn.belongsToMany(User, {through: 'TurnStudent'});
+User.belongsToMany(Turn, {through: 'TurnStudent'});
 
-Turn.belongsTo(Teacher);
-Teacher.hasMany(Turn);
+Turn.belongsTo(User);
+User.hasMany(Turn);
 
 Turn.belongsToMany(Kit, {through: 'TurnKit'});
 Kit.belongsToMany(Turn, {through: 'TurnKit'});

@@ -14,8 +14,7 @@ Además, un profesor será uno o mas clientes de un equipo y un equipo tendrá u
 */
 const { Sequelize, DataTypes, STRING } = require('sequelize');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
-const {Student} = require('./Student');
-const {Teacher} = require('./Teacher');
+const {User} = require('./User');
 const {Kit} = require('./Kit');
 const {Turn} = require('./Turn');
 const {HU} = require('./HistoriaUsuario');
@@ -41,16 +40,19 @@ const Team = sequelize.define('team',{
     },
 
 });
-Student.belongsToMany(Team, {through: 'TeamStudent'});
-Team.belongsToMany(Student, {through: 'TeamStudent'});
+const TeamStudent = sequelize.define({
+    role: {
+        type: DataTypes.ENUM,
+            values: ['ScrumMaster','ProductOwner', 'Developer'],
+            allowNull: false,
+            defaultValue: 'Developer'
+    }
+});
+User.belongsToMany(Team, {through: 'TeamStudent'});
+Team.belongsToMany(User, {through: 'TeamStudent'});
 
-Team.belongsTo(Teacher);
-Teacher.hasMany(Team);
-
-Team.belongsToMany(Teacher, 
-    {through: 'TeamClient', foreignKey: 'teamId'}
-);
-Teacher.belongsToMany(Team, {through: 'TeamClient', foreignKey: 'clientId'});
+Team.belongsTo(User);
+User.hasMany(Team);
 
 Team.belongsTo(Turn, {foreignKey: 'turnId'});
 Turn.hasMany(Team, {foreignKey: 'turnId'});
@@ -58,16 +60,6 @@ Turn.hasMany(Team, {foreignKey: 'turnId'});
 Team.belongsTo(Kit, {foreignKey: 'kitId'});
 Kit.hasMany(Team, {foreignKey: 'kitId'});
 
-Team.belongsTo(Student, {foreignKey: 'SMId'});
-Student.hasMany(Team, {foreignKey: 'SMId'});
-
-Team.belongsTo(Student, {foreignKey: 'POId'});
-Student.hasMany(Team, {foreignKey: 'POId'});
-
-Team.belongsToMany(Student, 
-    {through: 'TeamDev', foreignKey: 'teamId'}
-);
-Student.belongsToMany(Team, {through: 'TeamDev', foreignKey: 'DevId'});
 
 HU.belongsToMany(Team, {through: 'TeamHU', foreignKey: 'HUId'});
 Team.belongsToMany(HU, {through: 'TeamHU', foreignKey: 'teamId'});
