@@ -11,6 +11,17 @@ const path = require('path');
 const { Op } = require('sequelize');
 
 
+exports.verifyToken = (async (req,res,next)=>{
+    const {tokenId} = req.body;
+    if(tokenId){
+        const decoded = await jwt.verify(req.body.tokenId, 'secret');
+        const user = await User.findOne({where: {id: decoded.id, email: decoded.email}});
+        //if(user.role == req.role){
+            return res.status(200).send();
+        //}
+    }
+    return res.status(401).send();
+});
 
 exports.register = (async (req,res,next) =>{
     try{
@@ -60,21 +71,11 @@ exports.login = (async (req,res,next) =>{
         if(!isMatch){
             return res.status(401).json({error: "unauthorized"});
         }
-            const token = jwt.sign({email: user.email}, 'secret');
-            const envPath = path.resolve(process.cwd() + "/.vscode/", '.env');
+            const token = jwt.sign({email: user.email, id: user.id}, 'secret');
 
-            const envContent = fs.readFileSync(envPath, 'utf8');
-
-            const envConfig = dotenv.parse(envContent);
-
-            if(envConfig.TokenId){
-                
-                fs.appendFileSync('./.vscode/.env', `\nTokenId=${token}`);
-            }
             res.status(200).json({
                 status: "success",
-                data: [], tokenId: token, message: "Login exitoso"});
-                //res.redirect("../index");
+                tokenId: token, message: "Login exitoso"});
 
         
         res.end();

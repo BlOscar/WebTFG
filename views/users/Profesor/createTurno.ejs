@@ -55,7 +55,7 @@
     date.setHours(time.split(':')[0]);
     date.setMinutes(time.split(':')[1]);
     const prueba = JSON.parse(JSON.stringify(kitList));
-    const res = await fetch("http://localhost:8000/turnos/api/add",{
+    const res = await fetch("http://localhost:8000/turno/api/add",{
         method:"POST",
         headers:{
         "Content-Type":"application/json"
