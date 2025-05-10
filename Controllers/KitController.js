@@ -29,8 +29,8 @@ exports.seeKit = (async (req,res,next)=>{
             return res.status(404).json({error: "este kit no existe"});
         }
         const HUList = await HU.findAll({where: {kitId: kitId}});
-        const boxLego = await LegoBox.findOne({where: {kitId: kitId}});
-
+        const boxLego = await LegoBox.findAll({where: {kitId: kitId}, include: {model:ManualBox, required: true}});
+        
             res.render('users/Profesor/menuKit.ejs', {kit, HUList, boxLego});
         
     }catch(err){
@@ -48,9 +48,9 @@ exports.addKit = (async (req,res,next)=>{
         }
         
         const user = await User.findOne({where: {username : teacherName}});
-        if(!user){
+        /*if(!user || user.role == 'alumno'){
             return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
-        }
+        }*/
         const kit = await Kit.create({name, objetive, userId: user.id});
         return res.status(200).json({status: "success", name: kit.id});
         

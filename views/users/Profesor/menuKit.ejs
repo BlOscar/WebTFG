@@ -9,30 +9,61 @@
 <body>
     
 
-    <div class="container">
+    <div class="container-grid container">
         <h2>Kit:</h2>
         <h5>Nombre: <%= kit.name %></h5>
         <h5>Necesidades: <%= kit.objetive %></h5>
         <h5>Historias de Usuario: </h5>
 
+        <div class="scroll-container" style="padding: 10px; margin-bottom: 20px;">
+            <table>
+                <tbody>
+                <% if(HUList.length != 0){ %>
+                
+                    <% HUList.forEach (hu => { %>
+                        <tr>
+                            <td>
+        
+                            <h6>Nombre: <%= hu.name %></h6>
+                            <h6>Necesidades: <%= hu.description%></h6>
+                            <img src="/<%=hu.imageUrl%>" />
+    
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } %>
+
+               
+                </tbody>
+            </table>
+
+        </div>
+        <a href="/kit/addHU" class="btn-redirect">Add HU</a>
+
         <div class="scroll-container" >
             <table>
                 <tbody>
-    
-                <% HUList.forEach (hu => { %>
+                <% if(boxLego.length != 0){ %>
+            
                     <tr>
-                        <td>
-    
-                        <h6>Nombre: <%= hu.name %></h6>
-                        <h6>Necesidades: <%= hu.description%></h6>
-                        <img src="/<%=hu.imageUrl%>" />
-
-                        </td>
+                        <% boxLego[0].name %>
                     </tr>
-                <% }); %>
+                    <% boxLego.forEach (box => { %>
+                        <tr>
+                            <td>
+        
+                            <h6>manual enlace: <a href="/<%=box.urlPDF%>"></a> <%= box.name %></h6>
+                        
+    
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } %>
+               
                 </tbody>
             </table>
         </div>
-        <h5>Nombre de Caja: <%= boxLego.name%></h5>
+        <a href="/kit/addBox" class="btn-redirect">Add Box</a>
+
     </div>
 </body>

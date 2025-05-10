@@ -7,7 +7,7 @@ document.getElementById("kit-form").addEventListener("submit", async (e) =>{
     const idProduct = document.getElementById("idProduct").value;
     const name = document.getElementById("name").value;
     const prueba = JSON.parse(JSON.stringify(huList));
-    const res = await fetch("http://localhost:8000/kits/api/add",{
+    const res = await fetch("http://localhost:8000/kit/api/add",{
         method:"POST",
         headers:{
         "Content-Type":"application/json"
@@ -39,7 +39,7 @@ document.getElementById("HU-form").addEventListener("submit", async(e) =>{
     debugger;
     const description = document.getElementById("description").value;
     const imageUrl = document.getElementById("imageUrl").value;
-    const res = await fetch("/kits/api/addHU",{
+    const res = await fetch("/kit/api/addHU",{
         method:"POST",
         headers:{
         "Content-Type":"application/json"

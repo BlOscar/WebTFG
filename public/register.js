@@ -6,7 +6,7 @@ document.getElementById("register-form").addEventListener("submit",async (e)=>{
     const name = document.getElementById('name').value;
     const role = document.getElementById('role').value;
     const password = document.getElementById('password').value;
-    const res = await fetch("http://localhost:8000/users/api/register",{
+    const res = await fetch("http://localhost:8000/api/register",{
         method:"POST",
         headers:{
         "Content-Type":"application/json"
@@ -20,5 +20,5 @@ document.getElementById("register-form").addEventListener("submit",async (e)=>{
         })
     });
 if(res.ok){
-window.location.href = "/users/login";  }
+window.location.href = "/login";  }
 });

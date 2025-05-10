@@ -4,19 +4,25 @@ const methodOverride = require('method-override');
 const userRoutes = require('./Routes/userRoute');
 const kitRoutes = require('./Routes/KitRoute');
 const turnoRoutes = require('./Routes/TurnoRoute');
+const routes = require('./Routes/index');
 
 
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const dotenv = require('dotenv');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+require('./middleware/passport');
 
 
 
 
 const app = express();
+app.use(cookieParser());
 
 // Configurar middleware
+app.use(passport.initialize());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method', { methods: ["POST", "GET"] }));
@@ -29,16 +35,17 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Rutas
-app.use('/users', userRoutes);
+/*app.use('/users', userRoutes);
 app.use('/kits', kitRoutes);
-app.use('/turnos', turnoRoutes);
+app.use('/turnos', turnoRoutes);*/
+app.use('/',routes);
 app.get('/home', verificarToken, (req,res)=>{
     res.render('home', {user: req.user});
 })
 
 // Ruta principal
 app.get('/', (req, res) => {
-    res.redirect('/users/login');
+    res.redirect('/login');
 });
 
 

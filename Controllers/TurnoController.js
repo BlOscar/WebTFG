@@ -5,6 +5,7 @@ const {User} = require("../Models/User");
 
 const {Team} = require("../Models/Team");
 const { Op } = require('sequelize');
+const { HU } = require("../Models/HistoriaUsuario");
 
 
 exports.seeTurno = (async (req,res,next)=>{
@@ -80,7 +81,7 @@ function checkKits(kits, kitToDelete, operator){
 
 exports.seeCreateTurno = (async (req,res,next)=>{
     try{
-        const KitList = await Kit.findAll();
+        const KitList = await Kit.findAll({include: {model: HU, required: true}});
         res.render('users/Profesor/createTurno.ejs',{KitList});
     }catch(err){
         console.log(err);

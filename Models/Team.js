@@ -40,16 +40,16 @@ const Team = sequelize.define('team',{
     },
 
 });
-const TeamStudent = sequelize.define({
+const TeamStudent = sequelize.define('TeamStudent',{
     role: {
         type: DataTypes.ENUM,
-            values: ['ScrumMaster','ProductOwner', 'Developer'],
+            values: ['sm','po', 'dev'],
             allowNull: false,
-            defaultValue: 'Developer'
-    }
+            defaultValue: 'dev'
+    },
 });
-User.belongsToMany(Team, {through: 'TeamStudent'});
-Team.belongsToMany(User, {through: 'TeamStudent'});
+User.belongsToMany(Team, {through: TeamStudent});
+Team.belongsToMany(User, {through: TeamStudent});
 
 Team.belongsTo(User);
 User.hasMany(Team);
