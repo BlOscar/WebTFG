@@ -72,7 +72,10 @@ exports.login = (async (req,res,next) =>{
             return res.status(401).json({error: "unauthorized"});
         }
             const token = jwt.sign({email: user.email, id: user.id}, 'secret');
-
+            res.cookie('token', token, {
+                httpOnly: true,
+                maxAge: 3600000
+              });
             res.status(200).json({
                 status: "success",
                 tokenId: token, message: "Login exitoso"});

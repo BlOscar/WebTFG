@@ -11,13 +11,18 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const dotenv = require('dotenv');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+require('./middleware/passport');
 
 
 
 
 const app = express();
+app.use(cookieParser());
 
 // Configurar middleware
+app.use(passport.initialize());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method', { methods: ["POST", "GET"] }));
