@@ -19,17 +19,19 @@ function verifyRole(role){
         }
     }
 }
-
-//get para comprobar token (esto seria mas un parche, no recomendado)
-router.post('/api/verify-token',userRoute.verifyToken)
-
 //gets userController
 router.get('/login', userRoute.see);
 router.get('/register', userRoute.newUserForm);
 router.get('/menu', userRoute.getMenu);
 
 router.post('/api/login', userRoute.login);
-router.post('/api/register', userRoute.register);
+router.post('/api/register',(req,res,next)=>{ const {role} = req.body
+if(role != 'alumno' || role != null) res.status(401).send();}, userRoute.register);
+router.post('/api/adminRegister', userRoute.register);
+router.delete('/logout', (req,res,next)=>{
+    req.cookies.token = '';
+    res.status(200).send();
+})
 
 
 //gets kitController
@@ -42,8 +44,10 @@ function verify(){
     }
 }
 router.get('/kit/addHU',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.seeHU);
+router.get('/kit/showKits', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.seeKits);
 router.get('/kit/:id/show', kitRoute.seeKit);
 router.get('/kit/addBox', passport.authenticate('jwt', {session: false}),verifyRole('profesor'),kitRoute.seeBox);
+
 
 router.post('/kit/api/add',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.addKit);
 router.post('/kit/api/addHU',passport.authenticate('jwt', {session: false}),verifyRole('profesor'),upload.single('imageUrl'),kitRoute.addHU);

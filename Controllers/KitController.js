@@ -4,6 +4,7 @@ const {HU} = require('../Models/HistoriaUsuario');
 const {LegoBox} = require('../Models/LegoBox');
 const fs = require('fs');
 const { ManualBox } = require('../Models/ManualBox');
+const { col, fn } = require('sequelize');
 
 exports.see = (async (req,res,next)=>{
     try{
@@ -17,6 +18,16 @@ exports.seeHU = (async (req,res,next)=>{
     try{
         const KitList = await Kit.findAll();
         res.render('users/Profesor/addHU.ejs',{KitList});
+    }catch(err){
+        console.log(err);
+    }
+})
+exports.seeKits = (async (req,res,next)=>{
+    try{
+        const kitList = await Kit.findAll();
+        const huList = await HU.findAll({attributes: ['id', 'kitId']});
+        const boxList = await LegoBox.findAll({attributes: ['id', 'kitId']});
+        res.render('users/Profesor/showKits.ejs', {kitList, huList, boxList});
     }catch(err){
         console.log(err);
     }

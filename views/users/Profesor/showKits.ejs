@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <div class="container-grid container">
+        <% if(kitList.length == 0){ %>
+            <h5>No existe ningún kit actualmente</h5>
+            <a href="/kit/addHU" class="btn-redirect">Crear Kit</a>
+        <% }else { kitList.forEach(kit => {  %>
+            <h6>Nombre:             
+                <a href="/kit/<%=kit.id%>/show"><%=kit.name%></a>
+                </h6>
+            <% const hu = huList.filter(i => i.kitId == kit.id);
+                if(hu.length===0){ %>
+                    <h6>No existe ninguna historia de usuario</h6>
+
+                <% }else {
+                    
+                    %>
+                    <h6>Numero de HU: <%= hu.length %></h6>
+                    
+
+
+            <% } %>
+            <a class="btn-redirect" href="/kit/addHU">Crear Historia</a>
+
+            <% const box = boxList.filter(i=>i.kitId == kit.kitId);
+                if(box.length===0){  %>
+                <h6>No existe ninguna caja</h6>
+
+                <% }else {
+                    
+                    %>
+                    <h6>Numero de Cajas: <%= box.length %></h6>
+
+                <% } %>
+            <a class="btn-redirect" href="/kit/addBox">Crear caja</a>
+
+
+        <% })} %>
+            
+    </div>
+
+
+</body>

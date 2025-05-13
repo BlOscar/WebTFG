@@ -11,37 +11,29 @@ const path = require('path');
 const { Op } = require('sequelize');
 
 
-exports.verifyToken = (async (req,res,next)=>{
-    const {tokenId} = req.body;
-    if(tokenId){
-        const decoded = await jwt.verify(req.body.tokenId, 'secret');
-        const user = await User.findOne({where: {id: decoded.id, email: decoded.email}});
-        //if(user.role == req.role){
-            return res.status(200).send();
-        //}
-    }
-    return res.status(401).send();
-});
 
 exports.register = (async (req,res,next) =>{
     try{
-        const {username, name, email, password} = req.body;
+        const {username, name, email, password, role} = req.body;
         //Comprobamos si existe en este contexto
         let temp = await User.findOne({where: {email}});
         if(!temp){
             temp = await User.findOne({where: {username}});
             if(!temp){
                 const handlePassword = await bcrypt.hash(password,10);
-                const user = await User.create({username,name,email,password: handlePassword});
+                const user = await User.create({username,name,email,password: handlePassword, role});
                 console.log(`Usuario creado con email ${email} y username: ${username}`);
-                res.redirect('/');
+                res.status(200).json({'success': 'patata'})
+                //res.redirect('/');
             }else
             {
                 console.log("ya existe alguien con ese nickname");
             }
         }else
         {
+
             console.log("ya existe alguien con ese correo");
+            res.status(402).send();
         }
     }catch(err){
         next(err);
