@@ -50,6 +50,10 @@ exports.getMenu = async (req, res) => {
     res.render('users/Profesor/menu', {turno});
 };
 
+exports.getMenuStudent = async (req,res,next) =>{
+    const turno = await Turn.findAll({where: {startDate: {[Op.gt]: Date.now()}}, include: {model: User, where: {id: req.user.id}, required: true}});
+    res.render('users/Student/menu', {turno});
+}
 exports.login = (async (req,res,next) =>{
     const email = req.body.email;
     const password = req.body.password;

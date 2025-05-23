@@ -18,6 +18,7 @@ const {User} = require('./User');
 const {Kit} = require('./Kit');
 const {Turn} = require('./Turn');
 const {HU} = require('./HistoriaUsuario');
+const {TeamRole} = require('../enums/teamRoles');
 
 
 
@@ -43,9 +44,9 @@ const Team = sequelize.define('team',{
 const TeamStudent = sequelize.define('TeamStudent',{
     role: {
         type: DataTypes.ENUM,
-            values: ['sm','po', 'dev'],
+            values: [TeamRole.ScrumMaster,TeamRole.ProductOwner, TeamRole.Developer],
             allowNull: false,
-            defaultValue: 'dev'
+            defaultValue: TeamRole.Developer
     },
 });
 User.belongsToMany(Team, {through: TeamStudent});

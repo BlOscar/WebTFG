@@ -39,24 +39,37 @@
 
         </div>
         <a href="/kit/addHU" class="btn-redirect">Add HU</a>
+        <h5>Cajas: </h5>
 
-        <div class="scroll-container" >
+        <div class="" >
             <table>
                 <tbody>
                 <% if(boxLego.length != 0){ %>
-            
-                    <tr>
-                        <% boxLego[0].name %>
-                    </tr>
                     <% boxLego.forEach (box => { %>
                         <tr>
                             <td>
-        
-                            <h6>manual enlace: <a href="/<%=box.urlPDF%>"></a> <%= box.name %></h6>
+                            <h6><%= box.name %> </h6>
+                            </td>
+                            <% if(box.manualBoxes.length !=0){
+                                box.manualBoxes.forEach(e=>{ %>
+                                
+                                <td>
+
+                                <h6>nombre: <%= e.name %></h6>
+                                <h6>manual enlace:
+                                 <a href="/<%= e.urlPDF %>"> <%= e.name %></a>
+                                </h6>
                         
     
-                            </td>
-                        </tr>
+                                </td>
+                                
+                            <% }); 
+                            }else{ %>
+
+                                <td><h6>No hay ningún manual</h6></td>
+                            <% } %>
+                            </tr>
+                        
                     <% }); %>
                 <% } %>
                

@@ -6,6 +6,8 @@ const {User} = require("../Models/User");
 const {Team} = require("../Models/Team");
 const { Op } = require('sequelize');
 const { HU } = require("../Models/HistoriaUsuario");
+const RandExp = require('randexp');
+
 
 
 exports.seeTurno = (async (req,res,next)=>{
@@ -24,6 +26,9 @@ exports.seeTurno = (async (req,res,next)=>{
             temp = await kitsAdded.find((e) => e.id == y.id);
             if(!temp){
                 kitsLeft.push(y);
+            }else{
+                y.quantity = y.quantity - 2;//temp.Turnkit.quantity;
+                kitsLeft.push(y);
             }
         }
         const teams = await Team.findAll({include: {
@@ -40,30 +45,42 @@ exports.seeTurno = (async (req,res,next)=>{
         const turn = await Turn.findOne({where: {id: idTurn}});
         if(!turn)
             return res.status(404).send();
-        res.render('users/Profesor/menuTurno.ejs', {turn, kitsAdded, teams, students});
+        res.render('users/Profesor/menuTurno.ejs', {turn, kitsAdded, kitsLeft, teams, students});
 
     }catch(err){
         console.log(err);
     }
 })
-exports.modifyTurno = (async (req,res,next) =>{
-    const {idTurn, fechaInicio, kitToDelete, kitToAdd} = req.body;
+exports.updateTurno = (async(req,res,next) =>{
+        const {startDate, kitList} = req.body;
+        const idTurn = req.params.id;
     if(Number.isNaN(idTurn)) 
         return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
-    const turn = await Turn.findOne({where: {id: idTurn}});
+    const turn = await Turn.findOne({where: {id: idTurn}, include: {model: Kit, required: true}});
     if(!turn)
         return res.status(404).send();
-    if(!fechaInicio || fechaInicio <= new Date()){
-        return res.status(400).json({error: "se tiene que añadir una fecha valida"});
+    if(startDate){ 
+        if(startDate <= new Date()){
+            return res.status(400).json({error: "se tiene que añadir una fecha valida"});
+        }else{
+            await turn.update({startDate});
+        }
     }
-    turn.update({fechaInicio: fechaInicio});
-    const kits = await Turn.findAll({where: {id: idTurn}, include : Kit});
-    if(checkKits(kits, kitToDelete, false)){
-        turn.removeKits(kitToDelete);
-    }
-    if(checkKits(kits,kitToAdd, true)){
-        turn.addKits(kitToAdd);
-    }
+    kitList.forEach(async kita=>{
+        var kit = await Kit.findByPk(kita[0]);
+        turn.hasKit(kit)
+        .then(async exists =>{
+            if(!exists){
+                turn.addKit(kit);
+            }else{
+                const temp = await turn.getKits({where: {id: kit.id}});
+                
+                temp[0].TurnKit.quantity = kita[1];
+                await temp[0].TurnKit.save();
+            }
+        })
+    })
+    return res.status(200).send();
 
 })
 function checkKits(kits, kitToDelete, operator){
@@ -104,30 +121,37 @@ exports.createTurno = (async (req,res,next) =>{
         if(!startDate || startDate <= new Date()){
             return res.status(400).json({error: "se tiene que añadir una fecha valida"});
         }
-        const user = await User.findOne({where: {username : teacherName}});
-        if(!user){
-            return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
-        }
         let kit;
         let teams = [];
+        let k = 0;
         for(let i = 0; i<kitList.length; i++){
             kit = await Kit.findOne({where: {id: kitList[i]}});
             if(!kit){
-                return res.status(400).json({error: `el kit ${kitList[i].name}, no existe`});
+                    return res.status(400).json({error: `el kit ${kitList[i].name}, no existe`});
+                }
+            for(let j = 0; j<kit.quantity; j++){
+                
+                
+                teams.push({name: name +'-' + (k),
+                            limit: 4,
+                            kitId: kit.id,
+                            turnId: 0
+                });
+                k++;
             }
-            teams.push({name: name +'-' + i,
-                        limit: 4,
-                        kitId: kit.id,
-                        turnId: 0
-            });
-
         }
-        const turn = await Turn.create({name, startDate, userId: user.id});
+        let code;
+        let temp;
+        do{
+            code =new RandExp(/[A-HJ-NP-Z]{4}-[A-HJ-NP-Z]{4}/).gen();
+            temp = await Turn.findOne({where: {codeTurn: code}});
+        }while(temp)
+        const turn = await Turn.create({name, startDate, userId: req.user.id, codeTurn: code});
         await turn.addKits(kitList);
         teams.forEach(e=>{
             e.turnId = turn.id;
         })
-        await Team.bulkCreate(teams);
+         await Team.bulkCreate(teams);
         return res.status(200).json({
             status: "success",
             message: "Turn creado"});
@@ -135,4 +159,25 @@ exports.createTurno = (async (req,res,next) =>{
         console.log(err);
         return res.status(500).send();
     }
+});
+exports.joinTurn = (async (req,res,next) =>{
+    const {codeTurn} = req.body;
+
+    const user  = await User.findOne({where: {id: req.user.id}, include: {model: Turn, required: false}});
+
+    var turn = await Turn.findOne({where: {codeTurn: codeTurn}});
+    user.hasTurno(turn)
+        .then(async exists =>{
+            if(!exists){
+                user.addTurno(turn);
+            }else{
+                return res.status(409).send();
+            }
+        }).catch(err=>{
+            if(err){
+                console.log(err);
+                return res.status(500).send();
+            }
+        });
+    return res.status(200).send();
 });

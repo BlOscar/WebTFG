@@ -40,31 +40,30 @@ exports.seeKit = (async (req,res,next)=>{
             return res.status(404).json({error: "este kit no existe"});
         }
         const HUList = await HU.findAll({where: {kitId: kitId}});
-        const boxLego = await LegoBox.findAll({where: {kitId: kitId}, include: {model:ManualBox, required: true}});
+        const boxLego = await LegoBox.findAll({where: {kitId: kitId}, include: {model:ManualBox, required: false}});
+                const manuals = [];
+
+        boxLego.forEach(e=>{
+            manuals.push(e.manualBoxes);
+        })
+        console.log(""+boxLego.manualBoxes);
         
-            res.render('users/Profesor/menuKit.ejs', {kit, HUList, boxLego});
+            res.render('users/Profesor/menuKit.ejs', {kit, HUList, boxLego, manuals});
         
     }catch(err){
         console.log(err);
     }
 })
 exports.addKit = (async (req,res,next)=>{
-    const {name, objetive, teacherName} = req.body;
-    console.log(req.body);
+    const {name, objetive, quantity} = req.body;
     //primero comprobamos si existen en la base de datos, si no existen lanzamos error
     try
     {
         if(!objetive || objetive == ""){
             return res.status(400).json({error: "se necesita incluir una necesidad"});
         }
-        
-        const user = await User.findOne({where: {username : teacherName}});
-        /*if(!user || user.role == 'alumno'){
-            return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});
-        }*/
-        const kit = await Kit.create({name, objetive, userId: user.id});
+        const kit = await Kit.create({name, objetive, userId: req.user.id, quantity});
         return res.status(200).json({status: "success", name: kit.id});
-        
     }catch(err){
         console.log(err);
     }
@@ -74,13 +73,26 @@ exports.addKit = (async (req,res,next)=>{
 
 exports.addHU = (async (req,res,next)=>{
     const {name,description, kitId} = req.body;
-    const imageUrl = req.file.path;
-    try{
-        const hu = await HU.create({name,description,imageUrl,kitId});
-        return res.status(200).json({status: "success", name: hu.name, description: hu.description, imageUrl: hu.imageUrl});
-    }catch(err){
-        console.log(err);
-    }
+    const imageUrl = req.file;
+    HU.findOrCreate({where: {name: name, kitId:kitId},
+                    defaults: {name,description,imageUrl : imageUrl.path,kitId}}
+        ).then(([hu,isCreated])=>{
+            if(isCreated){
+                return res.status(200).json({status: "success", name: hu.name, description: hu.description, imageUrl: hu.imageUrl});
+            }
+            const error = new Error('Esta HU ya existe en este contexto');
+            error.statusCode = 409; //Conflicto
+            throw error;
+            
+        }).catch(err=>{
+            console.log(err);
+            fs.unlink(imageUrl.path, error=>{
+            if(error) 
+                console.log('error al eliminar', error)
+            });
+            return res.status(err.statusCode || 500).send();
+
+        });
 });
 
 exports.seeBox = (async (req,res,next)=>{
@@ -100,10 +112,8 @@ exports.addBox = (async (req,res,next)=>{
         defaults: {name, productCode: productId, kitId}
     }).then(async ([box, isCreated])=>{
         if(isCreated){
-            const manuals = ManualBox.findAll({where: {legoBoxId: box.id}})
-            let temp;
             for(let i = 0; i< manualUrl.length; i++){
-                await ManualBox.create({name: `${name}-${i}`, urlPDF: manualUrl[i].path});
+                await ManualBox.create({name: `${name}-${i}`, urlPDF: manualUrl[i].path, legoBoxId: box.id});
             };
             return res.status(200).json({status: "success"});
         }

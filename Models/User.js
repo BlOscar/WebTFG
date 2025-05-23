@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes, STRING } = require('sequelize');
+const {UserRole} = require('../enums/userRoles');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
 
 const User = sequelize.define('user',{
@@ -19,9 +20,9 @@ const User = sequelize.define('user',{
         },
         role: {
             type: DataTypes.ENUM,
-            values: ['profesor', 'alumno'],  // Valores posibles para el rol
+            values: [UserRole.Teacher, UserRole.Student],  // Valores posibles para el rol
             allowNull: false,
-            defaultValue: 'alumno',  // Valor por defecto
+            defaultValue: UserRole.Student,  // Valor por defecto
           }
 });
 

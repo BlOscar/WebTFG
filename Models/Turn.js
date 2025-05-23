@@ -29,9 +29,21 @@ const Turn = sequelize.define('turno',
         {
             type:DataTypes.DATE, 
             require: true
+        },
+        codeTurn:{
+            type: DataTypes.STRING, require: true, defaultValue: 'default'
+
         }
     }
 );
+const TurnKit = sequelize.define('TurnKit',{
+    quantity:{
+        type: DataTypes.INTEGER, require: true
+
+    }
+}
+    
+)
 
 Turn.belongsToMany(User, {through: 'TurnStudent'});
 User.belongsToMany(Turn, {through: 'TurnStudent'});
@@ -39,8 +51,8 @@ User.belongsToMany(Turn, {through: 'TurnStudent'});
 Turn.belongsTo(User);
 User.hasMany(Turn);
 
-Turn.belongsToMany(Kit, {through: 'TurnKit'});
-Kit.belongsToMany(Turn, {through: 'TurnKit'});
+Turn.belongsToMany(Kit, {through: TurnKit});
+Kit.belongsToMany(Turn, {through: TurnKit});
 (async()=>{
     try{
         await sequelize.sync();

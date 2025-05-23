@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer src="/kit.js"></script>
-    <script defer src="/auth.js"></script>
+
     <link rel="stylesheet" href="/style.css">
 
 </head>
@@ -19,84 +19,12 @@
         <label>Necesidades del cliente:</label>
         <textarea id= "necesidades" name="necesidades" required></textarea>
         <br>
-        <!--<label>Historias de usuario</label>
-        <br>
-        <% if(HUList.length != 0){ %>
-        <div class="scroll-container", style="display: none;">
-
-        
-        <table >
-            <tr>
-                <th>Options</th>
-            </tr>
-            <tbody class="scroll-container">
-            <% HUList.forEach (hu => { %>
-                <tr>
-                    <td>
-                        <p class="input-form-label">
-                            <input type="checkbox" name="huList[]" id="huList[]" value="<%=hu.id%>"><%= hu.name %>
-                            </p>
-                    </td>
-                    
-                </tr>
-
-            <% }); %>
-    </tbody>
-            
-        </table>
-    </div>
-        <% } else { %>
-            <h6>Necesitas añadir una HU</h6>
-            <% } %> -->
-    
-    <script>
-        function closeManual(){
-            document.getElementById("addHUmanual").style = "";
-            document.getElementById("addHUmanual_on").style = "display: none;";
-            document.getElementById("addHu").style = "display: none;";
-
-        }
-        function addManual(){
-            document.getElementById("addHUmanual").style = "display: none;";
-            document.getElementById("addHUmanual_on").style = "";
-            document.getElementById("addHu").style = "";
-
-        }
-        try{
-            document.getElementById("addHUmanual").addEventListener("button",async (e)=>{
-                e.preventDefault();
-                debugger;
-                document.getElementById("addHUmanual").style = "display: none;";
-
-            })
-        }catch(err){
-            console.log(err);
-        }
-    </script>
-
-        <br>
-        <label>Nombre de Caja:</label>
-        <input type="text" id="nameCaja" name="nameCaja" required>
-        <label>Codigo de caja:</label>
-        <input type="number" id="idProduct" name="idProduct" required>
+        <label>Cantidad</label>
+        <input type="text" id="quantity" name="quantity" required>
         <button type="submit">Add kit</button>
 
     </form>
-    <button type="button" id="addHUmanual" onclick="addManual()" style>Add HU</button>
-        <button type="button" id="addHUmanual_on" onclick="closeManual()"  style="display: none;">Add HUJ</button>
-        <div id="addHu" style="display: none;">
-        <form id="HU-form">
-            <label for="nameHU" class="input-form-label">nombre</label>
-            <input type="text" id= "nameHU" required>
-            <label for="description" class="input-form-label">descripcion</label>
-            <input type="text" id= "description" required>
-            <label for="email" class="input-form-label">imagen</label>
-            <input type="text" id = "imageUrl" required>
-            <button type="submit">addHU</button>
-        </form>
-    </div>
     
-</ul>
 </div>
 </body>
 </html>

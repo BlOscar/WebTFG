@@ -1,12 +1,9 @@
 document.getElementById("kit-form").addEventListener("submit", async (e) =>{
     e.preventDefault();
-    const id = document.getElementById("necesidades").value;
-    const formData = new FormData(e.target);
-    const huList = formData.getAll('huList[]');
-    const nameCaja = document.getElementById("nameCaja").value;
-    const idProduct = document.getElementById("idProduct").value;
+    const objetive = document.getElementById("necesidades").value;
     const name = document.getElementById("name").value;
-    const prueba = JSON.parse(JSON.stringify(huList));
+        const quantity = document.getElementById("quantity").value;
+
     const res = await fetch("http://localhost:8000/kit/api/add",{
         method:"POST",
         headers:{
@@ -14,11 +11,8 @@ document.getElementById("kit-form").addEventListener("submit", async (e) =>{
         },
         body: JSON.stringify({
             name: name,
-            teacherName: "patata",
-            objetive: id,
-            HUList: prueba,
-            nameBox: nameCaja,
-            idProduct: idProduct
+            objetive: objetive,
+            quantity: quantity
             })
             });
     if(res.ok){
