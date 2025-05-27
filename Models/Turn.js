@@ -33,6 +33,9 @@ const Turn = sequelize.define('turno',
         codeTurn:{
             type: DataTypes.STRING, require: true, defaultValue: 'default'
 
+        },
+        isStarted: {
+            type: DataTypes.BOOLEAN, defaultValue: false
         }
     }
 );

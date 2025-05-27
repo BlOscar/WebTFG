@@ -53,10 +53,12 @@ router.get('/kit/showKits', passport.authenticate('jwt', {session: false}),verif
 router.get('/kit/:id/show', kitRoute.seeKit);
 router.get('/kit/addBox', passport.authenticate('jwt', {session: false}),verifyRole('profesor'),kitRoute.seeBox);
 
-
 router.post('/kit/api/add',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.addKit);
 router.post('/kit/api/addHU',passport.authenticate('jwt', {session: false}),verifyRole('profesor'),upload.single('imageUrl'),kitRoute.addHU);
 router.post('/kit/api/addBox',passport.authenticate('jwt', {session: false}),verifyRole('profesor'),upload.array('manualUrl',5),kitRoute.addBox);
+
+router.delete('/kit/api/removeHU',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.removeHU);
+router.delete('/kit/api/removeBox', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.removeBox);
 
 //gets turnoController
 router.get('/turno/addTurno',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.seeCreateTurno);
@@ -68,8 +70,12 @@ router.post('/turno/join',passport.authenticate('jwt', {session: false}),verifyR
 router.put('/turno/api/:id/update', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.updateTurno);
 
 //teamController
+router.get('/turno/:id/showTeams', passport.authenticate('jwt', {session: false}), TeamRoute.getTeams);
+router.get('/team/:id/showTeam', passport.authenticate('jwt', {session: false}), TeamRoute.showTeam);
+
 router.post('/api/:id/joinTeam/:idTeam',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), TeamRoute.joinTeam);
 router.delete('/api/removeTeam/:idTeam',passport.authenticate('jwt', {session: false}), TeamRoute.joinTeam);
+
 module.exports = router;
 
 

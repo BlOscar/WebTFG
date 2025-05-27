@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container-grid container text-center">
+    <h3>Equipo: <%=team.name%></h3>
+    <table>
+        <tr>
+            <th>
+                <h6>nombre alumno</h6>
+            </th>
+            <th>
+                rol
+            </th>
+        </tr>
+        <% team.users.forEach(t=>{ %>
+            <tr>
+                <th>
+                    <%= t.name %>
+                </th>
+                <th>
+                    <%= t.TeamStudent.role %>
+                </th>
+            </tr>
+        <%})%>
+        <% if(existInTeam){%>
+            <h6>patata</h6>
+            <%}else {%>
+            <h6>pimienta</h6>
+        <%}%>
+
+    </table>
+    </div>
+</body>

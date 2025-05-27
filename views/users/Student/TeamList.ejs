@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <script defer>
+        async function sendTeamData(id){
+            debugger;
+            const res = await fetch(`/api/<%=TurnId%>/joinTeam/${id}`,{
+                method:"POST",
+                headers:{
+                "Content-Type":"application/json"
+                },
+                
+            });
+            if(res.ok){
+
+            }
+        }
+    </script>
+    <div class="container" style="justify-content: center;">
+    <div class="container-grid">
+        <h3>Lista de Equipos: </h3>
+
+        <% teamList.forEach(team=>{ %>
+        
+            <h6><%=team[1].name %>: <%= team[0] %>/<%=team[1].limit %> </h6>
+            <button onclick="sendTeamData(<%- team[1].id %>)" type="button">Unirse</button>
+        <% }) %>
+    </div>
+    </div>
+    
+</body>

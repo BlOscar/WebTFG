@@ -1,5 +1,7 @@
 const {User} = require('../Models/User');
 const {Turn} = require('../Models/Turn');
+const {Team} = require('../Models/Team');
+
 const {Sprint} = require('../Models/Sprint');
 const {Result} = require('../Models/Result');
 
@@ -51,8 +53,23 @@ exports.getMenu = async (req, res) => {
 };
 
 exports.getMenuStudent = async (req,res,next) =>{
-    const turno = await Turn.findAll({where: {startDate: {[Op.gt]: Date.now()}}, include: {model: User, where: {id: req.user.id}, required: true}});
-    res.render('users/Student/menu', {turno});
+    //falta comprobar si esta en un team de un turno especifico
+    const turno = await Turn.findAll(   {where: {startDate: {[Op.gt]: Date.now()}},
+                                        include: [  {model: User, where: {id: req.user.id},required: true},
+                                                    {model: Team, include: 
+                                                        {model: User,where: {id: req.user.id}, require: false},
+                                                    require: false}]});
+        
+    const turnoList = []
+    turno.forEach(t=>{
+        let exists = false;
+        if(t.teams.length !== 0){
+            exists = true;
+        }
+        turnoList.push([exists, t]);
+    })
+    
+    res.render('users/Student/menu', {turnoList});
 }
 exports.login = (async (req,res,next) =>{
     const email = req.body.email;

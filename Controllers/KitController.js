@@ -70,6 +70,67 @@ exports.addKit = (async (req,res,next)=>{
     
     
 });
+exports.modifyKit = (async (req,res,next)=>{
+    const {quantity} = req.body;
+    const objetiveUrl = req.file;
+    const user = await User.findOne({where: {id: req.user.id}});
+    try{
+
+    }catch(err){
+
+    }
+});
+//falta eliminar kit
+exports.removeHU = (async (req,res,next)=>{
+    try{
+    const {idHU} = req.body;
+    const hu = await HU.findOne({where: {id: idHU}});
+    if(!hu){
+        return res.status(404).send();
+    }
+    fs.unlink(hu.imageUrl.path,async error=>{
+            if(error){
+                console.log('error al eliminar', error);
+                const responseError = new Error('No se ha podido eliminar');
+                responseError.status = 401;
+                throw responseError;
+            }
+            else await hu.destroy();
+            });
+    return res.status(200).send();
+    }catch(err){
+        console.log(err);
+        return res.status(err.statusCode || 500).send();
+    }
+    
+});
+
+exports.removeBox = (async (req,res,next)=>{
+    const {idBox} = req.body;
+    const box = await LegoBox.findOne({where: {id: idBox}, include: {model: ManualBox, required: true}});
+    if(!box){
+        return res.status(404).send();
+    }
+    try{
+    const manuals = box.getManuals();
+    manuals.forEach(manual=>{
+        fs.unlink(manual.manualUrl.path,async error=>{
+            if(error){
+                console.log('error al eliminar', error);
+                const responseError = new Error('No se ha podido eliminar');
+                responseError.status = 401;
+                throw responseError;
+            }
+            });
+    });
+    await manuals.destroy();
+    await box.destroy();
+    }catch(err){
+        console.log(err);
+        return res.status(err.statusCode || 500).send();
+    }
+
+});
 
 exports.addHU = (async (req,res,next)=>{
     const {name,description, kitId} = req.body;
