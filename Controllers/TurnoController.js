@@ -181,3 +181,19 @@ exports.joinTurn = (async (req,res,next) =>{
         });
     return res.status(200).send();
 });
+
+exports.startActivity = async (req,res,next) =>{
+    try{
+        const turn = await Turn.findOne({where: {id: req.params.idTurn}});
+        if(turn.isStarted){
+            return res.status(401).send();
+        }
+        turn.isStarted = true;
+        turn.state = 0;
+        await turn.save();
+        return res.status(200).send();
+    }catch(err){
+        console.log(err);
+    }
+}
+

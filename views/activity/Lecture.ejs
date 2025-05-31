@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <dialog id='description'>
+        
+    </dialog>
+    <div class="container-grid container">
+        <h6>Fase Actual: <%=state[0]%></h6>
+        <h6>Rol: <%=state[1]%></h6>
+        <button onclick="objetivePhase()">Ver objetivo Fase</button>
+        <% views.forEach(v=>{ %>
+            <a href='/activity/<%=turn.id%>/play?view=<%=v%>' class="btn-redirect"><%=v%></a>
+        <% })%>
+        <iframe name="pdf_doc" width="50%" height="50%"></iframe>
+        <div style="width: 100%; height: 100%;">
+            <% if(view){ %>
+            <%- include('partials/Instrucciones'); %>
+            <%}%>
+        </div>            
+    </div>
+    <script>
+        function objetivePhase(){
+            const favIcon = document.getElementById('description');
+                favIcon.textContent = `<%=instructions%>`;
+        favIcon.showModal();
+            
+        }
+    </script>
+</body>

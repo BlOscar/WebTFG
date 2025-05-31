@@ -87,9 +87,10 @@
         <% students.forEach(student =>{ %>
             <h6>nombre: <%= student.name %></h6>
         <% }) %>
-    <button>iniciar Actividad</button>
+        <form id="start-activity">
+            <button>iniciar Actividad</button>
+        </form>
     </div>
-
     <div id= 'modify-form' class="container-grid container" style="display: none;">
         <form id="form-modify-turn">
         <label>Fecha de inicio:</label>
@@ -124,6 +125,20 @@
     
 </body>
 <script>
+    const patata = <%- turn.id %>;
+
+    document.getElementById('start-activity').addEventListener("submit", async (e) =>{
+            e.preventDefault();
+            const res = await fetch(`http://localhost:8000/turno/api/${patata}/startActivity`,{
+                method:"PUT",
+                headers:{
+                "Content-Type":"application/json"
+                }
+            });
+            if(res.ok){
+                window.location.reload = '';
+            }
+        });
     document.getElementById("form-modify-turn").addEventListener("submit", async (e) =>{
                 e.preventDefault();
                 debugger;
@@ -131,7 +146,6 @@
                 const time = document.getElementById("time").value;
                 date.setHours(time.split(':')[0]);
                 date.setMinutes(time.split(':')[1]); 
-                const patata = <%- turn.id %>;
                 const res = await fetch(`http://localhost:8000/turno/api/${patata}/update`,{
                 method:"PUT",
                 headers:{

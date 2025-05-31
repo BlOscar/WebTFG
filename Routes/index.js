@@ -6,6 +6,7 @@ const kitRoute = require('../Controllers/KitController');
 const turnoRoute = require('../Controllers/TurnoController');
 const userRoute = require('../Controllers/UserController');
 const TeamRoute = require('../Controllers/TeamController');
+const ActivityRoute = require('../Controllers/ActivityController');
 
 const upload = require('../middleware/multer');
 const passport = require('passport');
@@ -64,10 +65,14 @@ router.delete('/kit/api/removeBox', passport.authenticate('jwt', {session: false
 router.get('/turno/addTurno',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.seeCreateTurno);
 router.get('/turno/:id/show',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.seeTurno);
 
+router.put('/turno/api/:idTurn/startActivity',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.startActivity );
+
 router.post('/turno/api/add',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.createTurno);
 
 router.post('/turno/join',passport.authenticate('jwt', {session: false}),verifyRole('alumno'),turnoRoute.joinTurn);
 router.put('/turno/api/:id/update', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.updateTurno);
+
+router.get('/activity/:idTurno/play',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.seeStudentActivity);
 
 //teamController
 router.get('/turno/:id/showTeams', passport.authenticate('jwt', {session: false}), TeamRoute.getTeams);

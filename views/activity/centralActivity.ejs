@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <div class="container-grid container">
+        <h3 class="text-center">Actividad: <%=turno.name></h3>
+        <h6 class="text-left">Fase Actual: <%=state[0]></h6>
+        <h6 class = "text-left">Tiempo Restante: <%=state[2]%></h6>
+        <table>
+            <tr>
+                Lista Equipos
+            </tr>
+            <tr>
+                <th>
+                        Nombre Equipo
+                </th>
+                <th>
+                    Archivos
+                </th>
+            </tr>
+
+        <% state[1].forEach(team =>{ %>
+            <tr>
+                <td>
+                    <%=team.name %>
+                </td>
+                <td>
+                    <a href="">Ver Archivos</a>
+                </td>
+            </tr>
+        <%})%>
+        </table>
+        <a href="" class="btn-redirect" style="background-color: aquamarine;">Avanza Actividad</a>
+    </div>
+</body>

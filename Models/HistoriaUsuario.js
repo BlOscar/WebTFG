@@ -9,25 +9,6 @@ const HU = sequelize.define('HU',{
     description: {
         type: DataTypes.STRING, require: true
     },
-    priority: {
-        type: DataTypes.INTEGER, 
-        require: true, 
-        validate: {
-            isInt: true,
-            min: {args: [0], msg: "the priority must be greater than 0"}
-        },
-        defaultValue: 0
-
-    },
-    size: {
-        type: DataTypes.INTEGER, 
-        require: true, 
-        validate: {
-            isInt: true,
-            min: {args: [0], msg: "the size must be greater than 0"}
-        },
-        defaultValue: 0
-    },
     imageUrl: {
         type: DataTypes.STRING,
         allowNull: true
@@ -38,7 +19,7 @@ Kit.hasMany(HU);
 
 (async()=>{
     try{
-        await sequelize.sync();
+        await sequelize.sync({alter: true});
         
     }catch(err){
         console.log(err);

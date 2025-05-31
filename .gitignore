@@ -137,4 +137,6 @@ dist
 .pnp.*
 
 uploads/*
-!uploads/.gitkeep
+!uploads/Instrucciones
+uploads/Instrucciones/*
+!uploads/Instrucciones/.gitkeep
