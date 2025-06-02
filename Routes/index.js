@@ -72,7 +72,14 @@ router.post('/turno/api/add',passport.authenticate('jwt', {session: false}),veri
 router.post('/turno/join',passport.authenticate('jwt', {session: false}),verifyRole('alumno'),turnoRoute.joinTurn);
 router.put('/turno/api/:id/update', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.updateTurno);
 
+router.get('/activity/:idTurno/session',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), ActivityRoute.seeTeacherActivity);
 router.get('/activity/:idTurno/play',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.seeStudentActivity);
+router.post('/activity/api/:idTurno/addHUTeam',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.addHUTeam);
+router.post('/activity/api/:idTurno/addHUSprint',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.addHUSprint);
+router.post('/activity/api/:idTurno/addResultSprint',passport.authenticate('jwt', {session: false}),verifyRole('alumno'),upload.single('fileInput'), ActivityRoute.addResultSprint);
+router.put('/activity/api/:idTurno/verifyResultSM',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.verifyResultSM);
+router.put('/activity/api/:idTurno/verifyResult',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), ActivityRoute.verifyResult);
+
 
 //teamController
 router.get('/turno/:id/showTeams', passport.authenticate('jwt', {session: false}), TeamRoute.getTeams);

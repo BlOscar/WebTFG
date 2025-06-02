@@ -82,9 +82,10 @@ exports.joinTeam = async (req,res,next) =>{
                 if(temp){
                     return res.status(409).send();
                 }
-                
+
                     let roleSelection = [];
                     roleSelection.push(TeamRole.ScrumMaster,TeamRole.ProductOwner,TeamRole.Developer);
+                    
                     students.forEach(student=>{
                         if(student.TeamStudent.role === TeamRole.ScrumMaster){
                             roleSelection = roleSelection.filter(x=> x !== TeamRole.ScrumMaster);
@@ -92,6 +93,10 @@ exports.joinTeam = async (req,res,next) =>{
                             roleSelection = roleSelection.filter(x=> x !== TeamRole.ProductOwner);                        
                         }
                     })
+                    if((students.length === team.limit-2 && roleSelection.length===3) ||
+                        (students.length === team.limit-1 && roleSelection.length===2)){
+                        roleSelection = roleSelection.filter(x=> x !== TeamRole.Developer);                        
+                    }
                     await team.addUser(user, {through: {role: roleSelection[Math.floor(Math.random() * roleSelection.length)]}});
                 
             }else{

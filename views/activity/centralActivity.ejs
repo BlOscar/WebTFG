@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="container-grid container">
-        <h3 class="text-center">Actividad: <%=turno.name></h3>
-        <h6 class="text-left">Fase Actual: <%=state[0]></h6>
+        <h3 class="text-center">Actividad: <%=turn.name%></h3>
+        <h6 class="text-left">Fase Actual: <%=state[0]%></h6>
         <h6 class = "text-left">Tiempo Restante: <%=state[2]%></h6>
         <table>
             <tr>
@@ -33,7 +33,40 @@
                     <a href="">Ver Archivos</a>
                 </td>
             </tr>
+            <tr id="sprint-Content">
+                <%if(team.sprint){%>
+                <table>
+                <tr>
+                    <th>nombre HU</th>
+                    <th>imagen HU</th>
+                    <th>Acciones</th>
+                </tr>
+                <%console.log(JSON.stringify(team)); 
+                team.sprint.results.forEach(result =>{
+                    if(result.SMValidation){%>
+                    <tr>
+                        <td><%=result.HU.name%></td>
+                        <td><img src="/<%=result.urlimage%>" /></td>
+                        <td>
+                            <%if(isValidate){%>
+                                <button>validar</button>
+                            <%}else{%>
+                                <button disabled="false">validar</button>
+                            <%}%>
+                        </td>
+                    </tr>
+                <%}})%>
+                </table>
+                <%}else {%>
+                <h6>no hay nada</h6>
+                <%}%>
+            </tr>
         <%})%>
+        <dialog>
+            <table>
+                
+            </table>
+        </dialog>
         </table>
         <a href="" class="btn-redirect" style="background-color: aquamarine;">Avanza Actividad</a>
     </div>

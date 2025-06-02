@@ -45,7 +45,6 @@
     </script>
 
     <div class=" container-grid container">
-    <button onclick="changeModify()">modificar</button>
     <div id="visual-turn">
 
     <div class = "text-center">
@@ -87,9 +86,13 @@
         <% students.forEach(student =>{ %>
             <h6>nombre: <%= student.name %></h6>
         <% }) %>
+        <% if(!turn.isStarted){%>
+        <button onclick="changeModify()">modificar</button>
+
         <form id="start-activity">
             <button>iniciar Actividad</button>
         </form>
+        <%}%>
     </div>
     <div id= 'modify-form' class="container-grid container" style="display: none;">
         <form id="form-modify-turn">

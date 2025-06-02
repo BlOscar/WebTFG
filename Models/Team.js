@@ -69,6 +69,10 @@ const TeamHU = sequelize.define('TeamHU',{
         },
         defaultValue: 0
     },
+    isComplete: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    }
 })
 User.belongsToMany(Team, {through: TeamStudent});
 Team.belongsToMany(User, {through: TeamStudent});
@@ -88,7 +92,7 @@ Team.belongsToMany(HU, {through: TeamHU, foreignKey: 'teamId'});
 
 (async()=>{
     try{
-        await sequelize.sync({alter: true});
+        await sequelize.sync();
         
     }catch(err){
         console.log(err);

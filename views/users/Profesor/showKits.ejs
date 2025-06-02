@@ -15,7 +15,7 @@
             <h6>Nombre:             
                 <a href="/kit/<%=kit.id%>/show"><%=kit.name%></a>
                 </h6>
-            <% const hu = huList.filter(i => i.kitId == kit.id);
+            <% const hu = huList.filter(i => i.kitId === kit.id);
                 if(hu.length===0){ %>
                     <h6>No existe ninguna historia de usuario</h6>
 
@@ -29,7 +29,8 @@
             <% } %>
             <a class="btn-redirect" href="/kit/addHU">Crear Historia</a>
 
-            <% const box = boxList.filter(i=>i.kitId == kit.kitId);
+            <%const box = boxList.filter(i=>i.kitId === kit.id);
+
                 if(box.length===0){  %>
                 <h6>No existe ninguna caja</h6>
 

@@ -19,7 +19,7 @@ Kit.hasMany(HU);
 
 (async()=>{
     try{
-        await sequelize.sync({alter: true});
+        await sequelize.sync();
         
     }catch(err){
         console.log(err);

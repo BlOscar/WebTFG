@@ -41,31 +41,30 @@
         <a href="/kit/addHU" class="btn-redirect">Add HU</a>
         <h5>Cajas: </h5>
 
-        <div class="" >
             <table>
-                <tbody>
+                <tr>
+                    <th>Nombre Manual</th>
+                    <th>Manuales</th>
+                </tr>
                 <% if(boxLego.length != 0){ %>
                     <% boxLego.forEach (box => { %>
                         <tr>
                             <td>
                             <h6><%= box.name %> </h6>
                             </td>
+                        
                             <% if(box.manualBoxes.length !=0){
                                 box.manualBoxes.forEach(e=>{ %>
-                                
                                 <td>
 
-                                <h6>nombre: <%= e.name %></h6>
                                 <h6>manual enlace:
                                  <a href="/<%= e.urlPDF %>"> <%= e.name %></a>
                                 </h6>
                         
     
                                 </td>
-                                
                             <% }); 
                             }else{ %>
-
                                 <td><h6>No hay ningún manual</h6></td>
                             <% } %>
                             </tr>
@@ -73,9 +72,8 @@
                     <% }); %>
                 <% } %>
                
-                </tbody>
+
             </table>
-        </div>
         <a href="/kit/addBox" class="btn-redirect">Add Box</a>
 
     </div>

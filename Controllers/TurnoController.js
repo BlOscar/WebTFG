@@ -35,10 +35,9 @@ exports.seeTurno = (async (req,res,next)=>{
             model: Turn,
             where: {id: idTurn}
         }});
-        const students = await User.findAll({include:{
-            model: Turn,
-            where: {id: idTurn}
-        }});
+        const turns = await Turn.findOne({where: {id:idTurn},include: {model: User, where: {role: 'alumno'}, required: true} });
+        const students = turns.users;
+        
         
         if(Number.isNaN(idTurn)) 
             return res.status(401).json({error: "no existe o no tiene los permisos suficentes"});

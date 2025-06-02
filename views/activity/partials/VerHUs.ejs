@@ -7,4 +7,113 @@
 
 </head>
 <body>
+    <table>
+        <tr>
+            <th>Nombre HU</th>
+            <th>Priorización</th>
+            <th>Tamaño</th>
+            <th>Acción</th>
+        </tr>
+        <%Hus.forEach(hu=>{ %>
+            <tr>
+                <td><%=hu.name%></td>
+                <td><%=hu.priority%></td>
+                <td><%=hu.size%></td>
+                <td><button onclick='seeHU(<%-JSON.stringify(hu)%>)'>ver</button> </td>
+               
+
+            </tr>
+        <%})%>
+    </table>
+    
+
+<dialog id="hu_view">
+  <div class="header">
+    <form id="hu-sprints">
+        
+        <% if(poWrite){%>
+            <input id= 'priority'type="text" maxlength="1" style="width: 10%;" placeholder="P" />
+        <%}else{%>
+            <p id="priority-content" style="font-size: xx-large;">M</p>
+        <%}%>
+        <strong id="nameHU" style="font-size: 10px;">HU 1.1: Chalet</strong>
+        <% if(devWrite){%>
+            <input id="size" type="number" maxlength="10" style="width: 10%;" placeholder="T" />
+        <%}else{%>
+            <h6 id="size-content">M</h6>
+        <%}%>
+    </div>
+  
+    <div>
+
+        <img id="hu_image" src="" class="image">
+    
+    </div>
+    <% if(SMWrite){ %>
+        </form>
+
+        <button target= "button" onclick="addHUSprint()" class="button-container" style="background-color: lightblue;">Seleccionar</button>
+
+    <%}else if(poWrite){%>
+        <button class="button-container">Seleccionar</button>
+        </form>
+
+    <%}else if(devWrite){%>
+        <button class="button-container">Seleccionar</button>
+        </form>
+        <%}%>
+</dialog>
+    <script defer>
+        const HUs = <%- JSON.stringify(Hus); %>
+
+        async function addHUSprint(){
+            const name = document.getElementById('nameHU').textContent; 
+            const hu = HUs.find(p=> p.name === name);
+            debugger;
+            if(hu){
+                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/addHUSprint`,{
+                method:"POST",
+                headers:{
+                "Content-Type":"application/json"
+                },
+                body: JSON.stringify({
+                    huId: hu.id
+                })
+            });
+            }
+
+        }
+        document.getElementById('hu-sprints').addEventListener('submit', async (e)=>{
+            e.preventDefault();
+            debugger;
+            const priority = document.getElementById('priority')?.value;
+            const size = document.getElementById('size')?.value;
+            const name = document.getElementById('nameHU').textContent;
+            const hu = HUs.find(p=> p.name === name);
+            if(hu && (priority || size)){
+            const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/addHUTeam`,{
+                method:"POST",
+                headers:{
+                "Content-Type":"application/json"
+                },
+                body: JSON.stringify({
+                    huId: hu.id,
+                    priority: priority,
+                    size: size
+                })
+            });
+            }
+        });
+
+        function seeHU(hu){
+            debugger;
+            const dialog = document.getElementById('hu_view');
+            document.getElementById('nameHU').textContent = hu.name;
+            document.getElementById('hu_image').src ='/'+ hu.imageUrl;
+            document.getElementById('priority-content').textContent = hu.priority;
+            document.getElementById('size-content').textContent =hu.size;
+            dialog.showModal();
+            
+        }
+    </script>
 </body>

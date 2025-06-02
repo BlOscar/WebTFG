@@ -16,11 +16,16 @@ const Sprint = sequelize.define('sprint',{
     }
 });
 
-HU.belongsToMany(Sprint, {through: 'SprintHU', foreignKey: 'huId'});
-Sprint.belongsToMany(HU,{through: 'SprintHU', foreignKey: 'sprintId'});
+const SprintHU = sequelize.define('SprintHU',{
+    position:{
+        type: DataTypes.INTEGER, require: true
+    }
+});
+HU.belongsToMany(Sprint, {through: SprintHU, foreignKey: 'huId'});
+Sprint.belongsToMany(HU,{through: SprintHU, foreignKey: 'sprintId'});
 
-Team.belongsToMany(Sprint, {through: 'TeamSprint', foreignKey: 'teamId'});
-Sprint.belongsToMany(Team,{through: 'TeamSprint', foreignKey: 'sprintId'});
+Team.hasOne(Sprint);
+Sprint.belongsTo(Team);
 
 (async()=>{
     try{

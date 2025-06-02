@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Posicion</th>
+            <th>Nombre HU</th>
+            <th>Acción</th>
+        </tr>
+    <%HuSprints.sort((x, y) => x.SprintHU.position - y.SprintHU.position).forEach(hu=>{ %>
+            <tr>
+                <td><%=hu.SprintHU.position%></td>
+                <td><%=hu.name%></td>
+                <td>
+                <button onclick='seeHU(<%-JSON.stringify(hu)%>)'>ver</button>
+                </td>
+            </tr>
+    <%})%>
+        </table>
+
+    <dialog id="hu_view">
+        <div class="header">
+            <h6>M</h6>
+            <strong id="nameHU" style="font-size: 10px;">HU 1.1: Chalet</strong>
+            <h6>M</h6>
+        </div>
+  
+        <div>
+
+            <img id="hu_image" src="" class="image">
+    
+        </div>
+        <% if(devWrite){ %>
+            <input type="file" id="fileInput" accept="image/*" style="display: none">
+            <button target= "button" onclick="document.getElementById('fileInput').click()" class="button-container" style="background-color: lightblue;">Tomar Foto</button>
+        <%}else if(SMWrite){%>
+            <button target= "button" onclick="approveHU()" class="button-container" style="background-color: lightblue;">Aprobar HU</button>
+
+        <%}%>
+    </dialog>
+        <script defer>
+            function seeHU(hu){
+                const dialog = document.getElementById('hu_view');
+                document.getElementById('nameHU').textContent = hu.name;
+                document.getElementById('hu_image').src ='/'+ hu.imageUrl;
+                dialog.showModal();
+            }
+
+            
+            const HUs = <%- JSON.stringify(HuSprints); %>
+            async function approveHU(){
+            const name = document.getElementById('nameHU').textContent;
+            const hu = HUs.find(p=> p.name === name);
+            debugger;
+            const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/verifyResultSM`,{
+                method:"PUT",
+                headers:{
+                            "Content-Type":"application/json"
+
+                },
+                body: JSON.stringify({
+                    idHU: hu.id
+                })
+                })
+
+            }
+
+            document.getElementById("fileInput").addEventListener('change', async (e)=>{
+                const fileInput = document.getElementById("fileInput").files[0];
+                const name = document.getElementById('nameHU').textContent;
+                debugger;
+                const hu = HUs.find(p=> p.name === name);
+                const formData = new FormData();
+                    formData.append("fileInput", fileInput);
+                    formData.append("idHU", hu.id);
+                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/addResultSprint`,{
+                method:"POST",
+                headers:{
+                },
+                body: formData
+                })
+            });
+        </script>
+</body>

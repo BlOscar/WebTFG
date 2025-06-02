@@ -2,11 +2,13 @@ body{
     margin: 0;
     background-color: lightblue;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+  }
+  
+  .header {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    min-height: 100svh;
-    font-size: larger;
   }
   .button-container{
     width: 100%;
@@ -23,6 +25,8 @@ body{
     background-color: white;
     border-radius: 10px;
     padding: 10px;
+    justify-self: center;
+    margin: 10px 30px;
 
  
   }
@@ -38,12 +42,36 @@ body{
     margin: 10px 30px;
     padding: 10px;
     display: flex;
+    justify-self: center;
+
+    
+  }
+  table, tr, th {
+    border: 1px solid;
+    text-align: center;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
   }
   .container-grid{
     display:grid;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
+    justify-self: center;
   }
   h6{
     margin: 10px;
+  }
+  dialog{
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 12px;
+    font-family: sans-serif;
+    box-sizing: border-box;
   }
   a.btn-redirect{
     padding: 1px 6px;
