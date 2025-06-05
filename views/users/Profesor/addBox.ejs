@@ -53,12 +53,15 @@
         body: formData
     });
     if(res.ok){
-        window.location.href = "/home";
+        window.location.href = `/kit/${document.getElementById("kitId").value}/show`;
+    }
+    else{
+        const response = await res.json();
+        alert("Ha habido un error durante la creación: " + response.error);
     }
 })
     }catch(err){
         console.log(err);
-        
     }
 </script>
 </html>

@@ -39,6 +39,9 @@ const Turn = sequelize.define('turno',
         },
         state: {
             type: DataTypes.INTEGER, require: true, defaultValue: 0
+        },
+        timeLeftState: {
+            type: DataTypes.DATE
         }
     }
 );

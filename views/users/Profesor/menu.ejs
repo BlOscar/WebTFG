@@ -7,6 +7,10 @@
 
 </head>
 <body>
+    <div class="header" style="background-color: lightslategrey;">
+        <h6>usuario: <%=name%></h6>
+        <h6>Rol: Profesor</h6>
+    </div>
     <div class="container" style="justify-content: center;">
     <div class="container-grid">
         <section style="margin: 10 px;padding: 0.15px 10px; border: 1px solid grey; border-radius: 16px">
@@ -33,6 +37,7 @@
         function getHora(){
             var turno = <%- JSON.stringify(turno) %>;
             turno.forEach(p =>{
+                debugger;
                 const time = document.getElementById(`start-time${p.id}`).textContent;
                 let prueba = new Date(time);
                 document.getElementById(`start-time${p.id}`).textContent = "Día: " + prueba.toLocaleDateString('es-ES') + "\tHora: "+ prueba.toLocaleTimeString('es-ES');

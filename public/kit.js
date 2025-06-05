@@ -17,7 +17,7 @@ document.getElementById("kit-form").addEventListener("submit", async (e) =>{
             });
     if(res.ok){
         
-        window.location.href = "/home";
+        window.location.href = "/menu";
     }else{
         const favIcon = document.getElementById('dialog-error');
         debugger;

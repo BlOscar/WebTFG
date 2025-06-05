@@ -29,37 +29,47 @@
 
 <dialog id="hu_view">
   <div class="header">
-    <form id="hu-sprints">
         
         <% if(poWrite){%>
+                <form id="hu-sprints">
+
             <input id= 'priority'type="text" maxlength="1" style="width: 10%;" placeholder="P" />
         <%}else{%>
             <p id="priority-content" style="font-size: xx-large;">M</p>
         <%}%>
-        <strong id="nameHU" style="font-size: 10px;">HU 1.1: Chalet</strong>
+        <strong id="nameHU" style="font-size: 13px;">HU 1.1: Chalet</strong>
         <% if(devWrite){%>
+                <form id="hu-sprints">
+
             <input id="size" type="number" maxlength="10" style="width: 10%;" placeholder="T" />
         <%}else{%>
-            <h6 id="size-content">M</h6>
+            <p id="size-content" style="font-size: xx-large;">M</p>
         <%}%>
+        <img id="hu_image" src="" class="image">
+
     </div>
   
     <div>
-
-        <img id="hu_image" src="" class="image">
+        <p id="hu-description"></p>
     
     </div>
     <% if(SMWrite){ %>
         </form>
-
-        <button target= "button" onclick="addHUSprint()" class="button-container" style="background-color: lightblue;">Seleccionar</button>
-
+        <div class="button-container" style="background-color: lightblue;">
+        <button target= "button" onclick="addHUSprint()"  style="background-color: lightblue; border: 1px;">Seleccionar</button>
+        </div>
     <%}else if(poWrite){%>
-        <button class="button-container">Seleccionar</button>
+                <div class="button-container">
+
+        <button style="background-color: lightblue; border: 1px;">Seleccionar</button>
+                </div>
         </form>
 
     <%}else if(devWrite){%>
-        <button class="button-container">Seleccionar</button>
+                <div class="button-container">
+
+        <button style="background-color: lightblue; border: 1px;">Seleccionar</button>
+                </div>
         </form>
         <%}%>
 </dialog>
@@ -103,6 +113,9 @@
                 })
             });
             }
+            if(res.ok){
+                
+            }
         });
 
         function seeHU(hu){
@@ -110,8 +123,14 @@
             const dialog = document.getElementById('hu_view');
             document.getElementById('nameHU').textContent = hu.name;
             document.getElementById('hu_image').src ='/'+ hu.imageUrl;
-            document.getElementById('priority-content').textContent = hu.priority;
-            document.getElementById('size-content').textContent =hu.size;
+            document.getElementById('hu-description').textContent = hu.description;
+            let temp = document.getElementById('priority-content');
+            if(temp){
+                temp.textContent = hu.priority;
+            }else{
+                document.getElementById('size-content').textContent =hu.size;
+
+            }
             dialog.showModal();
             
         }

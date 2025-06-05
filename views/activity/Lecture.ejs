@@ -14,27 +14,31 @@
         <h6>Fase Actual: <%=state[0]%></h6>
         <h6>Rol: <%=state[1]%></h6></div>
     <div class="container container-grid">
+        <div class="header">
+        <% if(views){ views.forEach(v=>{ %>
+            <a href='/activity/<%=turn.id%>/play?view=<%=v%>' class="btn-redirect"><%=v%></a>
+        <% })}%>
+            <a href="#" onclick="objetivePhase()" class="btn-redirect">Ver objetivo Fase</a>
+        </div>    
         
-        <button onclick="objetivePhase()">Ver objetivo Fase</button>
         
-        <div style="width: 100%; height: 75vh;">
+        
+        <div style="width: 100%; height: auto;">
             <% if(view){ %>
             <%- include('partials/'+ view); %>
             <%}%>
         </div>
-        <div class="header">
-        <% views.forEach(v=>{ %>
-            <a href='/activity/<%=turn.id%>/play?view=<%=v%>' class="btn-redirect"><%=v%></a>
-        <% })%>
-        </div>       
+           
     </div>
     <script defer>
         function objetivePhase(){
             debugger;
+            event.preventDefault();
             const favIcon = document.getElementById('description');
                 favIcon.textContent = `<%=instructions%>`;
         favIcon.showModal();
             
         }
+        objetivePhase();
     </script>
 </body>

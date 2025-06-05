@@ -22,11 +22,17 @@ function verifyRole(role){
         }
     }
 }
+
+router.get('/home', (req,res)=>{
+    let isConnected = true;
+    if(!req.cookies.token || req.cookies.token === '')
+        isConnected = false;
+        res.render('home', {user: req.user, isConnected});
+})
 //gets userController
 router.get('/login', userRoute.see);
 router.get('/register', userRoute.newUserForm);
-router.get('/menu', userRoute.getMenu);
-router.get('/menuS',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), userRoute.getMenuStudent);
+router.get('/menu', passport.authenticate('jwt', {session: false}), userRoute.getMenu);
 
 
 router.post('/api/login', userRoute.login);
@@ -42,13 +48,6 @@ router.delete('/logout', (req,res,next)=>{
 
 //gets kitController
 router.get('/kit/add',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.see);
-function verify(){
-    return (req,res,next)=>{
-        const patata = req.cookies.token;
-        console.log(patata);
-        next();
-    }
-}
 router.get('/kit/addHU',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.seeHU);
 router.get('/kit/showKits', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.seeKits);
 router.get('/kit/:id/show', kitRoute.seeKit);
@@ -79,6 +78,7 @@ router.post('/activity/api/:idTurno/addHUSprint',passport.authenticate('jwt', {s
 router.post('/activity/api/:idTurno/addResultSprint',passport.authenticate('jwt', {session: false}),verifyRole('alumno'),upload.single('fileInput'), ActivityRoute.addResultSprint);
 router.put('/activity/api/:idTurno/verifyResultSM',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.verifyResultSM);
 router.put('/activity/api/:idTurno/verifyResult',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), ActivityRoute.verifyResult);
+router.put('/activity/api/:idTurno/nextPhase',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), ActivityRoute.continueActivity);
 
 
 //teamController
@@ -86,7 +86,7 @@ router.get('/turno/:id/showTeams', passport.authenticate('jwt', {session: false}
 router.get('/team/:id/showTeam', passport.authenticate('jwt', {session: false}), TeamRoute.showTeam);
 
 router.post('/api/:id/joinTeam/:idTeam',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), TeamRoute.joinTeam);
-router.delete('/api/removeTeam/:idTeam',passport.authenticate('jwt', {session: false}), TeamRoute.joinTeam);
+router.delete('/api/removeStudent/:idTeam',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), TeamRoute.removeTeam);
 
 module.exports = router;
 

@@ -7,10 +7,13 @@
 
 </head>
 <body>
+    <p id="demo"></p>
+
+
     <div class="container-grid container">
         <h3 class="text-center">Actividad: <%=turn.name%></h3>
         <h6 class="text-left">Fase Actual: <%=state[0]%></h6>
-        <h6 class = "text-left">Tiempo Restante: <%=state[2]%></h6>
+        <p id="time-left" class = "text-left"></p>
         <table>
             <tr>
                 Lista Equipos
@@ -30,10 +33,11 @@
                     <%=team.name %>
                 </td>
                 <td>
-                    <a href="">Ver Archivos</a>
+                    <button onclick="seeArchives('<%=team.name%>')">Ver Archivos</button>
                 </td>
             </tr>
-            <tr id="sprint-Content">
+            <tr id="sprint-Content-<%=team.name%>" style="display: none;">
+                <td>
                 <%if(team.sprint){%>
                 <table>
                 <tr>
@@ -48,8 +52,13 @@
                         <td><%=result.HU.name%></td>
                         <td><img src="/<%=result.urlimage%>" /></td>
                         <td>
-                            <%if(isValidate){%>
-                                <button>validar</button>
+                            <%if(isValidate){
+                                if(!result.ClientValidation){%>
+
+                                    <button onclick="validateResult(<%=result.id%>)">validar</button>
+                                <%}else{%>
+                                    <h6 style="color: green">Validado</h6>
+                                <%}%>
                             <%}else{%>
                                 <button disabled="false">validar</button>
                             <%}%>
@@ -60,14 +69,97 @@
                 <%}else {%>
                 <h6>no hay nada</h6>
                 <%}%>
+                </td>
             </tr>
         <%})%>
-        <dialog>
-            <table>
-                
-            </table>
-        </dialog>
         </table>
-        <a href="" class="btn-redirect" style="background-color: aquamarine;">Avanza Actividad</a>
+        <%if(turn.state !== -1){ %>
+            <a href="" id="move-activity"class="btn-redirect" style="background-color: aquamarine;">Avanza Actividad</a>
+            <script defer>
+            document.getElementById("move-activity").addEventListener('click', async (e)=>{
+                e.preventDefault();
+                await changePhase();
+                });
+                
+            async function changePhase(){
+                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/nextPhase`,{
+                    method:"PUT",
+                    headers:{
+                            "Content-Type":"application/json"
+                    }});
+                if(res.ok){
+                    window.location.reload();
+                }
+            }
+            </script>
+        <%}%>
     </div>
+    <script defer>
+        function seeArchives(name){
+            const archives = document.getElementById(`sprint-Content-${name}`);
+            debugger;
+            if(archives.style.display === "none"){
+                archives.style.display = "";
+            }else{
+                archives.style.display = "none";
+            }
+        }
+        async function validateResult(id){
+            debugger;
+            const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/verifyResult`,{
+                method:"PUT",
+                headers:{
+                        "Content-Type":"application/json"
+                
+                },
+                body: JSON.stringify({
+                    idResult: id
+                })
+                    
+            });
+            if(res.ok){
+
+                window.location.reload();
+            }else{
+                const message = res.json();
+
+                alert("ha habido un error con la validación", message.error);
+            }
+                
+        }
+    </script>
+    <script defer>
+          document.addEventListener("DOMContentLoaded", () => {
+
+        debugger;
+        const time = <%- JSON.stringify(timer) %>;
+        var timeServer = new Date(time).getTime();
+            var countDownDate = new Date("Jan 5, 2030 15:37:25").getTime();
+
+            var x = setInterval(async function() {
+
+            var now = new Date().getTime();
+    
+            var distance = timeServer - now;
+                
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+            document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+            + minutes + "m " + seconds + "s ";
+                
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("demo").innerHTML = "EXPIRED";
+                if(confirm("¿quieres cambiar de fase?")===true){
+                    await changePhase();
+                }
+            }
+            }, 1000);
+          })
+        
+    </script>
+    
 </body>

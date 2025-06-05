@@ -59,8 +59,15 @@ exports.addKit = (async (req,res,next)=>{
     //primero comprobamos si existen en la base de datos, si no existen lanzamos error
     try
     {
+        const temp = await Kit.findOne({where: {name: name}});
+        if(temp){
+            return res.status(409).json({error: "este nombre ya se usa en otro kit"});
+        }
         if(!objetive || objetive == ""){
             return res.status(400).json({error: "se necesita incluir una necesidad"});
+        }
+        if(quantity <= 0){
+            return res.status(400).json({error: "se necesita tener minimo un kit"});
         }
         const kit = await Kit.create({name, objetive, userId: req.user.id, quantity});
         return res.status(200).json({status: "success", name: kit.id});
@@ -167,7 +174,14 @@ exports.seeBox = (async (req,res,next)=>{
 
 exports.addBox = (async (req,res,next)=>{
     const {name, productId, kitId} = req.body;
+    if(!name || name.trim() === ""){
+        return res.status(400).json({error: "Se debe de escribir un nombre para la caja"});
+    }
     const manualUrl = req.files;
+    if(manualUrl.length === 0){
+        return res.status(400).json({error: "Se debe de incluir un pdf con instrucciones"});
+
+    }
     LegoBox.findOrCreate({
         where: {name: name, productCode : productId, kitId: kitId},
         defaults: {name, productCode: productId, kitId}
@@ -188,6 +202,6 @@ exports.addBox = (async (req,res,next)=>{
                 if(error) console.log('error al eliminar', error);
             });
         });
-        return res.status(err.statusCode || 500).send();
+        return res.status(err.statusCode || 500).json({error: "ha habido un problema con la creacion de la caja"});
     })
 });

@@ -22,23 +22,23 @@ exports.register = (async (req,res,next) =>{
         if(!temp){
             temp = await User.findOne({where: {username}});
             if(!temp){
+                if(!password || !username){
+                    return res.status(400).json({error: "debes de tener un usuario y contraseña"});
+                }
                 const handlePassword = await bcrypt.hash(password,10);
                 const user = await User.create({username,name,email,password: handlePassword, role});
                 console.log(`Usuario creado con email ${email} y username: ${username}`);
-                res.status(200).json({'success': 'patata'})
-                //res.redirect('/');
+                return res.status(200).json({'success': 'patata'})
             }else
             {
                 console.log("ya existe alguien con ese nickname");
             }
         }else
         {
-
-            console.log("ya existe alguien con ese correo");
-            res.status(402).send();
+            res.status(409).json({error: "ya existe alguien con ese correo"});
         }
     }catch(err){
-        next(err);
+        console.log(err);
     }
 });
 exports.see = (req,res)=>{
@@ -48,12 +48,19 @@ exports.newUserForm = (req, res) => {
     res.render('users/register');
 };
 exports.getMenu = async (req, res) => {
-    const turno = await Turn.findAll({where: {startDate: {[Op.gt]: Date.now()}}});
-    res.render('users/Profesor/menu', {turno});
+    if(req.user.role === 'alumno'){
+        await MenuStudent(req,res);
+    }else{
+        await MenuTeacher(req,res);
+    }
 };
 
-exports.getMenuStudent = async (req,res,next) =>{
-    //falta comprobar si esta en un team de un turno especifico
+async function MenuTeacher(req,res){
+    const turno = await Turn.findAll({where: {startDate: {[Op.gt]: Date.now()}}});
+    res.render('users/Profesor/menu', {turno, name: req.user.name});
+}
+
+async function MenuStudent(req,res) {
     const turno = await Turn.findAll(   {where: {startDate: {[Op.gt]: Date.now()}},
                                         include: [  {model: User, where: {id: req.user.id},required: true},
                                                     {model: Team, include: 
@@ -69,8 +76,11 @@ exports.getMenuStudent = async (req,res,next) =>{
         turnoList.push([exists, t]);
     })
     
-    res.render('users/Student/menu', {turnoList});
+    res.render('users/Student/menu', {turnoList, name: req.user.name});
 }
+
+    
+
 exports.login = (async (req,res,next) =>{
     const email = req.body.email;
     const password = req.body.password;
@@ -84,6 +94,7 @@ exports.login = (async (req,res,next) =>{
         if(!isMatch){
             return res.status(401).json({error: "unauthorized"});
         }
+        const isTeacher = user.role === "profesor";
             const token = jwt.sign({email: user.email, id: user.id}, 'secret');
             res.cookie('token', token, {
                 httpOnly: true,
@@ -91,12 +102,12 @@ exports.login = (async (req,res,next) =>{
               });
             res.status(200).json({
                 status: "success",
-                tokenId: token, message: "Login exitoso"});
-
-        
+                tokenId: token, 
+                isTeacher: isTeacher,
+                message: "Login exitoso"});
         res.end();
     }
     }catch(err){
-        next(err);
+        console.log(err);
     }
 });

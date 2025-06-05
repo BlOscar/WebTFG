@@ -16,10 +16,11 @@ document.getElementById("login-form").addEventListener("submit",async (e)=>{
         })
     }).then(res => res.json())
     .then(jsonContent =>{
-        if(jsonContent.tokenId){
-            localStorage.setItem('tokenId',jsonContent.tokenId);
-            console.log(jsonContent.message);
-            window.location.href = "/home";
+        if(jsonContent.isTeacher){
+            window.location.href = "/menu";
+        }else{
+            window.location.href = "/menuS";
+
         }
 
     });

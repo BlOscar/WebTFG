@@ -13,13 +13,13 @@
         <section style="margin: 10 px;padding: 0.15px 10px; border: 1px solid grey; border-radius: 16px">
             <h3>Lista de Turnos Inscritos: </h3>
             <% if(turnoList && turnoList.length === 0){ %>
-                <a href="/turno/join" class="btn-redirect">Unirse a turno</a>
+                <p>No estás en ningún turno</p>
 
             
             <%}else{%>
                 <div class="scroll-container">
             <% turnoList.forEach(t =>{ %>
-                <a href="/turno/<%= t[1].id %>/show"><h4>Turno: <%= t[1].name %></h6></a>
+                <h4>Turno: <%= t[1].name %></h6>
                 <p>Fecha Inicio:<h6 name="patata[]" id="start-time<%= t[1].id%>"><%= t[1].startDate.toISOString() %></h6></p>
                 <% if(t[0]){ %>
                     <h6>ver qeuipo</h6>
@@ -39,10 +39,7 @@
         </section>
     </div>
     <div class="container-grid" style="flex-direction: column ;padding: 10px;">
-        <form id="turn-join">
-            <input type="text" id="codeTurn" name="codeTurn" required>
-            <button type="submit">Unirse a turno</button>
-        </form>
+        <button onclick="joinTurn()">Unirse a turno</button>
     </div>
 </div>
     <script>
@@ -52,36 +49,32 @@
                 const time = document.getElementById(`start-time${p[1].id}`).textContent;
                 let prueba = new Date(time);
                 document.getElementById(`start-time${p[1].id}`).textContent = "Día: " + prueba.toLocaleDateString('es-ES') + "\tHora: "+ prueba.toLocaleTimeString('es-ES');
-            
             });
-             
         }
         getHora();
     </script>
-    <script defer>
-        
-        try{
-        document.getElementById("turn-join").addEventListener("submit",async (e) =>{
+    <script>
+        async function joinTurn(){
             debugger;
-
-            e.preventDefault();
-
-            const codeTurn = document.getElementById('codeTurn').value;
-            const res = await fetch("http://localhost:8000/turno/join",{
+            let code = prompt("Please enter the code turn", "");
+            if (code != null) {
+                const res = await fetch("http://localhost:8000/turno/join",{
                 method:"POST",
                 headers:{
                 "Content-Type":"application/json"
                 },
                 body: JSON.stringify({
-            codeTurn: codeTurn,
-            })
-            });
-        })
-        debugger;
-        if(res.ok){
+                    codeTurn: code
+                })
+                });
+                if(res.ok){
+                    window.location.reload();
+                }else{
+                                
+                    const response = await res.json();
+                    alert("Ha habido un error durante la creación: " + response.error);
+                }
+            }
         }
-    }catch(err){
-        console.log(err);
-    }
     </script>
 </body>

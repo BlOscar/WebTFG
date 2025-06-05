@@ -7,6 +7,9 @@
 
 </head>
 <body>
+    <div class="header" style="background-color: lightslategrey;">
+        <h6>username: <%=name%></h6>
+        <h6>Rol: Profesor</h6></div>
     <script>
         function changeModify(){
             const modify = document.getElementById('modify-form');
@@ -49,6 +52,8 @@
 
     <div class = "text-center">
     <h2>Turno: <%= turn.name %></h2>
+        <h2>Codigo: <%= turn.codeTurn %></h2>
+
     </div>
     <h4>Kits asignados</h4>
     <div class="scroll-container" >
@@ -74,7 +79,7 @@
             <% teams.forEach (team => { %>
                 <tr>
                     <td>
-                        <a href="/team/<%= team.id %>/show"><h6>- <%= team.name %></h6></a>
+                        <a href="/team/<%= team.id %>/showTeam"><h6>- <%= team.name %></h6></a>
                     </td>
                 </tr>
             <% }); %>
@@ -83,7 +88,8 @@
         </table>
     </div>
     <h5>Alumnos inscritos: </h5>
-        <% students.forEach(student =>{ %>
+        <% if(students){ 
+        students.forEach(student =>{ %>
             <h6>nombre: <%= student.name %></h6>
         <% }) %>
         <% if(!turn.isStarted){%>
@@ -92,7 +98,7 @@
         <form id="start-activity">
             <button>iniciar Actividad</button>
         </form>
-        <%}%>
+        <%}}%>
     </div>
     <div id= 'modify-form' class="container-grid container" style="display: none;">
         <form id="form-modify-turn">
@@ -139,7 +145,7 @@
                 }
             });
             if(res.ok){
-                window.location.reload = '';
+                window.location.href = `/activity/${patata}/session`;
             }
         });
     document.getElementById("form-modify-turn").addEventListener("submit", async (e) =>{
@@ -161,6 +167,10 @@
             });
             if(res.ok){
                 location.reload();
+            }else{
+                        
+                const response = await res.json();
+                alert("Ha habido un error durante la modificación: " + response.error);
             }
 
             });

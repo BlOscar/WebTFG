@@ -9,9 +9,13 @@ body{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: large;
   }
   .button-container{
-    width: 100%;
+    width: 75%;
+    display: flex;
+    justify-content: center;
+    justify-self: center;
     background-color: lightgreen;
   }
   .text-center{
@@ -65,13 +69,17 @@ body{
     margin: 10px;
   }
   dialog{
-    width: 100%;
+    width: 50%;
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 5px;
-    font-size: 12px;
+    font-size: 20px;
     font-family: sans-serif;
     box-sizing: border-box;
+  }
+  img{
+    min-width: 150px;
+    max-width: 200px;
   }
   a.btn-redirect{
     padding: 1px 6px;

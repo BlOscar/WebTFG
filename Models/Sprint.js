@@ -12,7 +12,7 @@ const Sprint = sequelize.define('sprint',{
         type: DataTypes.STRING, require: true
     },
     improvement: {
-        type: DataTypes.INTEGER, unique: true
+        type: DataTypes.INTEGER, require: true, unique: false
     }
 });
 

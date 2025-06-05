@@ -7,11 +7,26 @@
 
 </head>
 <body>
-    <h1>Bienvenido a mi aplicacion</h1>
-    <h2>por ahora no hay mucho pero iremos mejorando</h2>
-    <h5>mandará a hacer un kit</h5>
+    <div class="container-grid">
+        <h1>Villa Lego</h1>
+        <h1>Conexion: 
+            <%if(!isConnected){%>
+                <p style="color: crimson;">No conectado</p>
+                <a href="/login" class="btn-redirect">Login</a>
+
+            <%}else{%>
+                <p style="color: green;">Conectado</p>
+                <a href="/menu" class="btn-redirect">Menu</a>
+
+
+            <%}%>
+        </h1>
+
     <br>
     <a href="/menu" class="btn-redirect">Menu profesor</a>
+
+    </div>
+    
     
 </body>
 </html>

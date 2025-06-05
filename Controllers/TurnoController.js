@@ -27,7 +27,7 @@ exports.seeTurno = (async (req,res,next)=>{
             if(!temp){
                 kitsLeft.push(y);
             }else{
-                y.quantity = y.quantity - 2;//temp.Turnkit.quantity;
+                y.quantity = temp.TurnKit.quantity;
                 kitsLeft.push(y);
             }
         }
@@ -36,7 +36,7 @@ exports.seeTurno = (async (req,res,next)=>{
             where: {id: idTurn}
         }});
         const turns = await Turn.findOne({where: {id:idTurn},include: {model: User, where: {role: 'alumno'}, required: true} });
-        const students = turns.users;
+        const students = turns?.users;
         
         
         if(Number.isNaN(idTurn)) 
@@ -44,7 +44,7 @@ exports.seeTurno = (async (req,res,next)=>{
         const turn = await Turn.findOne({where: {id: idTurn}});
         if(!turn)
             return res.status(404).send();
-        res.render('users/Profesor/menuTurno.ejs', {turn, kitsAdded, kitsLeft, teams, students});
+        res.render('users/Profesor/menuTurno.ejs', {turn, kitsAdded, kitsLeft, teams, students, name: req.user.username});
 
     }catch(err){
         console.log(err);
@@ -188,7 +188,9 @@ exports.startActivity = async (req,res,next) =>{
             return res.status(401).send();
         }
         turn.isStarted = true;
+        turn.startDate = Date.now();
         turn.state = 0;
+        turn.timeLeftState = new Date(turn.startDate.getTime() + 5*60*1000);
         await turn.save();
         return res.status(200).send();
     }catch(err){

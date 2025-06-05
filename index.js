@@ -34,13 +34,11 @@ app.use(express.urlencoded({ extended: true }));
 // Rutas
 
 app.use('/',routes);
-app.get('/home', verificarToken, (req,res)=>{
-    res.render('home', {user: req.user});
-})
+
 
 // Ruta principal
 app.get('/', (req, res) => {
-    res.redirect('/login');
+    res.redirect('/home');
 });
 
 

@@ -12,16 +12,34 @@
             <th>Posicion</th>
             <th>Nombre HU</th>
             <th>Acción</th>
+            <%if(HuSprints.results){%>
+                <th>Resultados</th>
+            <%}%>
         </tr>
-    <%HuSprints.sort((x, y) => x.SprintHU.position - y.SprintHU.position).forEach(hu=>{ %>
+    <% if(HuSprints){
+        HuSprints.sort((x, y) => x.SprintHU.position - y.SprintHU.position).forEach(hu=>{ %>
             <tr>
                 <td><%=hu.SprintHU.position%></td>
                 <td><%=hu.name%></td>
                 <td>
                 <button onclick='seeHU(<%-JSON.stringify(hu)%>)'>ver</button>
                 </td>
+                <% console.log(JSON.stringify(hu));
+                if(hu.results){%>
+                <td>
+                    <%hu.results.forEach(result =>{ %>
+                        <img src="/<%=result.urlimage%>" style="max-width: 100px; max-height: 100px;">
+                        <%if(result.ClientValidation){%>
+                            <h6 style="color: lightgreen;">Validado</h6>
+                        <%}else{%>
+                            <h6 style="color:crimson;">No Validado</h6>
+
+                        <%}%>
+                    <%})%>
+                </td>
+                <%}%>
             </tr>
-    <%})%>
+    <%})}%>
         </table>
 
     <dialog id="hu_view">

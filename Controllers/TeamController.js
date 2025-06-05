@@ -11,7 +11,6 @@ exports.getTeams = async (req,res,next) =>{
             return res.status(401).send();
         }
         const teams = await turn.getTeams();
-                console.log(Object.getOwnPropertyNames(Object.getPrototypeOf(teams)));
         
 
         if(!teams){
@@ -41,14 +40,18 @@ exports.getTeams = async (req,res,next) =>{
     }
 }
 exports.showTeam = async(req,res,next) =>{
-    const team = await Team.findOne({where: {id: req.params.id}, include: {model: User, required: true}});
+    const team = await Team.findOne({where: {id: req.params.id}, include: {model: User, required: false}});
     const user = await User.findByPk(req.user.id);
-    const exists = team.users.find(p=> p.id === user.id);
-    if(exists){
-        res.render('users/showTeam.ejs',{team,existInTeam: true});
-    }else{
+    if(req.user.role === 'profesor'){
         res.render('users/showTeam.ejs',{team,existInTeam: false});
+    }else{
+    const exists = team.users.find(p=> p.id === user.id);
+        if(exists){
+            res.render('users/showTeam.ejs',{team,existInTeam: true});
+        }else{
+            res.render('users/showTeam.ejs',{team,existInTeam: false});
 
+        }
     }
 
 }
@@ -114,7 +117,7 @@ exports.removeTeam = async (req,res,next)=>{
     try{
         const team = await Team.findOne({where: {id: req.params.idTeam}, include: {model: User, required: false}});
         if(!team){
-            return res.status(401).send();
+            return res.status(404).json({error: "no existe este equipo"});
         }
         const students = await team.getUsers();
         const user = await User.findByPk(req.user.id);
