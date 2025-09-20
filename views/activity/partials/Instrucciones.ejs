@@ -1,13 +1,24 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/style.css">
 
-</head>
 <body>
-    <iframe style="height: 75vh;" src="/uploads/Instrucciones/<%=view%>.pdf">
+    <% const manuals = kit.legoBox.manualBoxes %>
+    <select id="manualInfo">
+        <%manuals.forEach(e=>{%>
+            <option value="<%= e.urlPDF %>" selected><%= e.name %> </option>
+                        <option value="<%= e.urlPDF %>" selected><%= e.name %> </option>
+
+
+        <%})%>
+    </select>
+    <script>
+        document.getElementById("manualInfo").addEventListener("change", async(e) =>{
+            e.preventDefault();
+            debugger;
+            const manualInfo = document.getElementById("manualInfo").value;
+            document.getElementById("manualR").src = "/"+manualInfo;
+
+        })
+    </script>
+    <iframe id="manualR" style="height: 75vh; width: 100%;" src="/<%=manuals[0].urlPDF%>">
 
     </iframe>
 </body>

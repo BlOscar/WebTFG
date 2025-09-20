@@ -11,6 +11,10 @@ const Result = sequelize.define('result',{
     },
     urlimage: {
         type: DataTypes.STRING, require: true
+    },
+    burdownChart: {
+        type: DataTypes.STRING, require: true
+
     }
 });
 

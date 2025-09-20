@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css">
+    <script src="/socket.io/socket.io.js"></script>
 
 </head>
 <body>
     <div class="header" style="background-color: lightslategrey;">
         <h6>username: <%=name%></h6>
-        <h6>Rol: Profesor</h6></div>
+        <h6>Rol: Profesor</h6>
+            <a href="/logout" class="btn-redirect">Cerrar sesion</a></div>
+</div>
     <script>
         function changeModify(){
             const modify = document.getElementById('modify-form');
@@ -44,6 +47,20 @@
                 kitselect.appendChild(item);
             }
             }
+        async function eliminateTurn(){
+            if(confirm("¿Seguro que desea eliminar este turno?")){
+                        const res = await fetch(`http://localhost:8000/turno/api/<%=turn.id%>/removeTurn`,{
+                        method:"DELETE",
+                        headers:{
+                            "Content-Type":"application/json"
+                        }
+                        });
+                        
+                        if(res.ok){
+                            window.location.href = "/menu";    
+                        }
+                    }
+        }
             
     </script>
 
@@ -91,14 +108,24 @@
         <% if(students){ 
         students.forEach(student =>{ %>
             <h6>nombre: <%= student.name %></h6>
-        <% }) %>
-        <% if(!turn.isStarted){%>
+        <% })
+            if(!turn.isStarted){%>
+                <form id="start-activity">
+                    <button>iniciar Actividad</button>
+                </form>
+            <%} %>
+        
+        <%}else{%>
+            <h6>No hay ningun alumno inscrito en este turno</h6>
+            <% if(!turn.isStarted){%>
         <button onclick="changeModify()">modificar</button>
 
-        <form id="start-activity">
-            <button>iniciar Actividad</button>
-        </form>
+        
         <%}}%>
+        <%if(!turn.isStarted){ %>
+            <button onclick="eliminateTurn()" id="remove-turn">eliminar turno</button>
+            
+        <%}%>
     </div>
     <div id= 'modify-form' class="container-grid container" style="display: none;">
         <form id="form-modify-turn">
@@ -112,7 +139,7 @@
 
         <% kitsLeft.forEach (kit => { %>
             <option data-quantity = '<%= kit.quantity %>' value="<%=kit.id%>"><%= kit.name %></option>
-            <% }); %>
+        <% }); %>
         </select>
 
         
@@ -148,6 +175,7 @@
                 window.location.href = `/activity/${patata}/session`;
             }
         });
+    
     document.getElementById("form-modify-turn").addEventListener("submit", async (e) =>{
                 e.preventDefault();
                 debugger;
@@ -174,4 +202,8 @@
             }
 
             });
+            document.getElementById('remove-turn').addEventListener('click',async (e) =>{
+                    debugger;
+                    
+                })
 </script>

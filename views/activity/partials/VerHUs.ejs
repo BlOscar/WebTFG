@@ -28,50 +28,60 @@
     
 
 <dialog id="hu_view">
+    <div style="display: flex;
+    flex-direction: column;">
   <div class="header">
         
         <% if(poWrite){%>
-                <form id="hu-sprints">
-
-            <input id= 'priority'type="text" maxlength="1" style="width: 10%;" placeholder="P" />
+                <form id="hu-sprints" class="form-HU">
+            <select id="priority" style="width: 100%;">
+                <option value="M">M</option>
+                <option value="S">S</option>
+                <option value="C">C</option>
+                <option value="W">W</option>
+            </select>
         <%}else{%>
             <p id="priority-content" style="font-size: xx-large;">M</p>
         <%}%>
-        <strong id="nameHU" style="font-size: 13px;">HU 1.1: Chalet</strong>
-        <% if(devWrite){%>
+        <strong id="nameHU" style="font-size: xx-large">HU 1.1: Chalet</strong>
+        <% if(devWrite && turn.state === 3){%>
                 <form id="hu-sprints">
 
             <input id="size" type="number" maxlength="10" style="width: 10%;" placeholder="T" />
         <%}else{%>
             <p id="size-content" style="font-size: xx-large;">M</p>
         <%}%>
-        <img id="hu_image" src="" class="image">
 
     </div>
   
-    <div>
+    <div style="display: flex; justify-content: space-between;margin:10px;">
         <p id="hu-description"></p>
+                <img id="hu_image" src="" class="image">
+
     
     </div>
-    <% if(SMWrite){ %>
+    <% if(poWrite){%>
+                <div class="button-container">
+
+        <button style="background-color: lightblue; border: 1px;">Seleccionar</button>
+                </div>
+        </form>
+    <%}else if(turn.state===3){
+            if(SMWrite){ %>
         </form>
         <div class="button-container" style="background-color: lightblue;">
-        <button target= "button" onclick="addHUSprint()"  style="background-color: lightblue; border: 1px;">Seleccionar</button>
+        <button target= "button" onclick="addHUSprint()"  style="background-color: lightblue; border: 1px;">Introducir en Sprint</button>
         </div>
-    <%}else if(poWrite){%>
+    
+
+    <%      }else if(devWrite){%>
                 <div class="button-container">
 
-        <button style="background-color: lightblue; border: 1px;">Seleccionar</button>
+        <button style="background-color: lightblue; border: 1px;">Introducir tamaño</button>
                 </div>
         </form>
-
-    <%}else if(devWrite){%>
-                <div class="button-container">
-
-        <button style="background-color: lightblue; border: 1px;">Seleccionar</button>
-                </div>
-        </form>
-        <%}%>
+        <%}}%>
+        </div>
 </dialog>
     <script defer>
         const HUs = <%- JSON.stringify(Hus); %>
@@ -126,11 +136,13 @@
             document.getElementById('hu-description').textContent = hu.description;
             let temp = document.getElementById('priority-content');
             if(temp){
-                temp.textContent = hu.priority;
-            }else{
-                document.getElementById('size-content').textContent =hu.size;
-
+                document.getElementById('priority-content').textContent =hu.priority
             }
+            temp = document.getElementById('size-content');
+            if(temp){
+                document.getElementById('size-content').textContent =hu.size;
+            }
+            
             dialog.showModal();
             
         }

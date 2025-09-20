@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <%if(SMWrite){%>
+        <form id="retrospective-sprint" enctype="multipart/form-data">
+                        <br>
+
+            <label for="mejoras" class="input-form-label">Analisis del Sprint</label>
+            <textarea style="width: auto; height: 250px;" id= "mejoras" name="mejoras" required></textarea>
+            <br>
+            <label for="mejoras" class="input-form-label">Imagen de BurdownChart</label>
+
+            <input type="file" accept="image/png" id = "burdownChart" required>
+            <button>Enviar</button>
+        </form>
+        <script>
+            document.getElementById("retrospective-sprint").addEventListener("submit",async (e)=>{
+                debugger;
+                const mejora = document.getElementById("mejoras").value;
+                const burdownChart = document.getElementById("burdownChart").files[0];
+                const formData = new FormData();
+                formData.append("improvement",mejora);
+                formData.append("burdownImage",burdownChart);
+                const res = await fetch("/activity/api/<%=turn.id%>/addImprovementSprint",{
+                    method:"POST",
+                    headers:{
+        
+                    },
+                    body: formData
+                });
+                if(res.ok){
+                    alert("Se ha Introducido con exito");
+                }
+                else{
+                    const response = await res.json();
+                    alert("Ha habido un error durante la creación: " + response.error);
+                }
+            })
+        </script>
+    <%}%>
+    
+
+
+</body>

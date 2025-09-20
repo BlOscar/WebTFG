@@ -7,13 +7,15 @@
 
 </head>
 <body>
-    <p id="demo"></p>
 
-
+    <div class="header" style="background-color: lightslategrey;">
+        <h6>Usuario: <%=user.name%></h6>
+        <h6>Rol: <%=user.role%></h6>
+            <a href="/logout" class="btn-redirect">Cerrar sesion</a></div>
     <div class="container-grid container">
         <h3 class="text-center">Actividad: <%=turn.name%></h3>
         <h6 class="text-left">Fase Actual: <%=state[0]%></h6>
-        <p id="time-left" class = "text-left"></p>
+        <p id="demo"></p>
         <table>
             <tr>
                 Lista Equipos
@@ -43,16 +45,22 @@
                 <tr>
                     <th>nombre HU</th>
                     <th>imagen HU</th>
-                    <th>Acciones</th>
+                    <%if(turn.state !== -1){%>
+                        <th>Acciones</th>
+                    <%}else{%>
+                        <th>burdownChart</th>    
+                    <%}%>
                 </tr>
-                <%console.log(JSON.stringify(team)); 
+                <% 
                 team.sprint.results.forEach(result =>{
                     if(result.SMValidation){%>
                     <tr>
                         <td><%=result.HU.name%></td>
                         <td><img src="/<%=result.urlimage%>" /></td>
                         <td>
-                            <%if(isValidate){
+                            <%if(turn.state === -1){%>
+                                <img src="/<%=result.burdownChart%>" />
+                            <%}else if(isValidate){
                                 if(!result.ClientValidation){%>
 
                                     <button onclick="validateResult(<%=result.id%>)">validar</button>
@@ -93,6 +101,8 @@
             }
             </script>
         <%}%>
+            <a href="/menu" class="btn-redirect" style="background-color:brown;">Salir de Actividad</a>
+
     </div>
     <script defer>
         function seeArchives(name){
@@ -104,6 +114,12 @@
                 archives.style.display = "none";
             }
         }
+        
+    </script>
+    <%if(turn.state !== -1){%>
+        
+    <script defer>
+
         async function validateResult(id){
             debugger;
             const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/verifyResult`,{
@@ -127,8 +143,6 @@
             }
                 
         }
-    </script>
-    <script defer>
           document.addEventListener("DOMContentLoaded", () => {
 
         debugger;
@@ -161,5 +175,6 @@
           })
         
     </script>
+    <%}%>
     
 </body>

@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style.css">
+    <script src="/socket.io/socket.io.js"></script>
 
 </head>
 <body>
-    
+    <div class="header" style="background-color: lightslategrey;">
+        <h6>Usuario: <%=user.name%></h6>
+        <h6>Rol: Alumno</h6>
+        <a href="" class="btn-redirect">Cerrar sesion</a>
+    </div>
     <div class="container" style="justify-content: center;">
     <div class="container-grid">
         <section style="margin: 10 px;padding: 0.15px 10px; border: 1px solid grey; border-radius: 16px">
@@ -76,5 +81,13 @@
                 }
             }
         }
+        var socket = io();
+        socket.emit('login', {role: 'alumno', id: <%-user.id%>})
+        socket.on('startActivity', (data)=>{
+            debugger;
+            if(confirm(`Se ha iniciado una actividad en la que participas, ¿deseas unirte?`) === true){
+                window.location.href = `/activity/${data.turnid}/play`;
+            }
+        })
     </script>
 </body>

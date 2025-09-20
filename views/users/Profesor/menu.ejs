@@ -10,6 +10,9 @@
     <div class="header" style="background-color: lightslategrey;">
         <h6>usuario: <%=name%></h6>
         <h6>Rol: Profesor</h6>
+            <a href="/logout" class="btn-redirect">Cerrar sesion</a></div>
+    </div>
+
     </div>
     <div class="container" style="justify-content: center;">
     <div class="container-grid">
@@ -17,8 +20,13 @@
             <h3>Lista de Turnos: </h3>
             <div class="scroll-container">
             <% turno.forEach(t =>{ %>
-                <a href="/turno/<%= t.id %>/show"><h4>Turno: <%= t.name %></h6></a>
-                <p>Fecha Inicio:<h6 name="patata[]" id="start-time<%= t.id%>"><%= t.startDate.toISOString() %></h6></p>
+                <a href="/turno/<%= t.id %>/show"><h4>Turno: <%= t.name %></h4></a>
+                <%if(t.isStarted){%>
+                    <p>Turno iniciado</p>
+                    <a href="/activity/<%= t.id%>/session" class="btn-redirect" style="background-color: green;">Ir a actividad</a>
+                <%}else{%>
+                    <p>Fecha Inicio:<h6 name="patata[]" id="start-time<%= t.id%>"><%= t.startDate.toISOString() %></h6></p>
+                    <%}%>
                 
 
             <% })%>

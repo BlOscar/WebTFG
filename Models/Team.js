@@ -51,13 +51,9 @@ const TeamStudent = sequelize.define('TeamStudent',{
 });
 const TeamHU = sequelize.define('TeamHU',{
     priority: {
-        type: DataTypes.INTEGER, 
+        type: DataTypes.CHAR, 
         require: true, 
-        validate: {
-            isInt: true,
-            min: {args: [0], msg: "the priority must be greater than 0"}
-        },
-        defaultValue: 0
+        
 
     },
     size: {
@@ -69,7 +65,7 @@ const TeamHU = sequelize.define('TeamHU',{
         },
         defaultValue: 0
     },
-    isComplete: {
+    isMinRole: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     }

@@ -7,6 +7,7 @@ const {Team} = require("../Models/Team");
 const { Op } = require('sequelize');
 const { HU } = require("../Models/HistoriaUsuario");
 const RandExp = require('randexp');
+const socket = require('../middleware/socket');
 
 
 
@@ -33,7 +34,7 @@ exports.seeTurno = (async (req,res,next)=>{
         }
         const teams = await Team.findAll({include: {
             model: Turn,
-            where: {id: idTurn}
+            where: {id: idTurn},
         }});
         const turns = await Turn.findOne({where: {id:idTurn},include: {model: User, where: {role: 'alumno'}, required: true} });
         const students = turns?.users;
@@ -94,7 +95,23 @@ function checkKits(kits, kitToDelete, operator){
     });
     return true;
 }
-
+exports.removeTurn = (async(req,res,next)=>{
+    const turnid = req.params.idTurn;
+    try{
+        const turn = await Turn.findOne({where:{id: turnid}, include: {model:Team, required: true}});
+        
+        if(turn){
+            await turn.setUsers([]);
+            await turn.setKits([]);
+            await Team.destroy({where: {turnId: turn.id}});
+            await turn.destroy();
+            return res.status(200).send();
+        }
+    }catch(err){
+        console.log("Ha habido un problema al eliminar turno")
+        console.log(err);
+    }
+})
 exports.seeCreateTurno = (async (req,res,next)=>{
     try{
         const KitList = await Kit.findAll({include: {model: HU, required: true}});
@@ -192,6 +209,7 @@ exports.startActivity = async (req,res,next) =>{
         turn.state = 0;
         turn.timeLeftState = new Date(turn.startDate.getTime() + 5*60*1000);
         await turn.save();
+        socket.startActivityIO(turn.id);
         return res.status(200).send();
     }catch(err){
         console.log(err);

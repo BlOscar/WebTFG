@@ -9,9 +9,12 @@ const { ManualBox } = require("../Models/ManualBox");
 const { HU } = require("../Models/HistoriaUsuario");
 const { Sprint } = require("../Models/Sprint");
 const { Result } = require("../Models/Result");
+const socket = require('../middleware/socket');
+const fs = require("fs");
 
 
 exports.seeTeacherActivity = async (req,res,next)=>{
+    try{
     const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: 
                                     {model: Team, required: true, include: 
                                         {model: Sprint, required: false, include: {
@@ -21,13 +24,16 @@ exports.seeTeacherActivity = async (req,res,next)=>{
                                             }
                                         }
                                     }});
-    const team = await Team.findAll({include: {model: Sprint, required: true}});
-    const sprints = await Sprint.findAll({include: {model: Team, required: true}});
+    
     let isValidate = false;
     let state;
     const teams = turn.teams;
+    
 
     switch(turn.state){
+        case -1:
+            state = ['Finalizacion Actividad', teams];
+        break;
         case 0:
             //Presentacion
             state = ['Presentacion', teams];
@@ -61,7 +67,10 @@ exports.seeTeacherActivity = async (req,res,next)=>{
             throw Error;
         
     }
-    res.render('activity/centralActivity.ejs', {turn, state, isValidate, timer: turn.timeLeftState.toISOString()});
+    res.render('activity/centralActivity.ejs', {turn, state, isValidate, timer: turn.timeLeftState.toISOString(), user: req.user});
+    }catch(err){
+        console.log(err);
+    }
 
 }
 
@@ -81,13 +90,16 @@ exports.seeStudentActivity = async (req,res,next) =>{
     if(!teamHU || !kit){
         return res.status(404).send();
     }
-    const manuals = kit.legoBox.manualBoxes;
     const Hus = refillHUs(teamHU, kit.HUs);
     const view = req.query.view?.split('_')[0];
     const role = team.users[0].TeamStudent.role;
     let instructions = '';
     let views = [];
     switch(turn.state){
+        case -1:
+            state = ['Finalizacion Actividad', team.users[0].TeamStudent.role];
+            res.render('activity/Lecture.ejs', {turn,state,view: null, views: null, instructions: null});
+            break;
         case 0:
             //Presentacion
             state = ['Presentacion', team.users[0].TeamStudent.role];
@@ -108,7 +120,7 @@ exports.seeStudentActivity = async (req,res,next) =>{
             instructions = representScenarioRead(role, view);
             views = allowedViewsRead[role];
             
-            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit, manuals});
+            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit});
 
             break;
         case 2:
@@ -126,7 +138,7 @@ exports.seeStudentActivity = async (req,res,next) =>{
             views = allowedViewsPriorize[role];
             
             const poWrite = true;
-            res.render('activity/Lecture.ejs', {turn, state, instructions: instructions[0], views, view, kit, manuals, Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3]});
+            res.render('activity/Lecture.ejs', {turn, state, instructions: instructions[0], views, view, kit, Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3]});
 
             break;
         case 3:
@@ -144,7 +156,7 @@ exports.seeStudentActivity = async (req,res,next) =>{
             views = allowedViewsPlan[role];
             const sprints = await Sprint.findOne({include: [{model: Team, where: {id: team.id}, required: true}, {model: HU, required: true}]});
             
-            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit, manuals, Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: sprints?.HUs});
+            res.render('activity/Lecture.ejs', {turn, state, instructions: instructions[0], views, view, kit, Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: sprints?.HUs});
 
             break;
         case 4:
@@ -158,10 +170,11 @@ exports.seeStudentActivity = async (req,res,next) =>{
                 return res.status(404).send();           
             }
             state = ['Ejecucion Sprint', role];
+            const sprintsE = await Sprint.findOne({include: [{model: Team, where: {id: team.id}, required: true}]});
+            const HuSprint = await Sprint.findOne({where: {id: sprintsE.id},include: [{model: HU, required:true, include: {model:Result, where: {SprintId: sprintsE.id},required: false}}]});
             instructions = representScenarioSprint(role);
             views = allowedViewsEjecution[role];
-            const sprintsE = await Sprint.findOne({include: [{model: Team, required: true}, {model: HU, required: true}]});
-            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit, manuals, Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: sprintsE.HUs});
+            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit, Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: HuSprint.HUs});
 
             break;
         case 5:
@@ -177,8 +190,9 @@ exports.seeStudentActivity = async (req,res,next) =>{
             state = ['Ejecucion Sprint', role];
             instructions = representScenarioReview();
             views = allowedViewsReview[role];
-            const sprintsR = await Sprint.findOne({include: [{model: Team, where: {id: team.id}, required: true}, {model: HU, required: true, include: {model: Result, required: false}}]});
-            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit, manuals, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: sprintsR.HUs});
+            const sprintsR = await Sprint.findOne({include: [{model: Team, where: {id: team.id}, required: true}]});
+            const HuSprints = await Sprint.findOne({where: {id: sprintsR.id},include: [{model: HU, required:true, include: {model:Result, where: {SprintId: sprintsR.id},required: false}}]});
+            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit,Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: HuSprints.HUs});
 
 
             break;
@@ -195,7 +209,7 @@ exports.seeStudentActivity = async (req,res,next) =>{
             state = ['Retrospectiva', role];
             instructions = representScenarioR(role, view);
             views = allowedViewsR[role];
-            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit, manuals,SMWrite: true});
+            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit,SMWrite: true});
             break;
         default: 
             throw Error;
@@ -346,6 +360,9 @@ página, puedes consultarla posteriormente en el momento que lo necesites. `;
 de leer las suyas si no lo ha hecho todavía. Después, comenzar juntos el paso 3.`;
     }
 }
+function representScenarioR(role, view){
+    
+}
 
 exports.addResultSprint = async(req,res)=>{
     const {idHU} = req.body;
@@ -359,9 +376,10 @@ exports.addResultSprint = async(req,res)=>{
         const hu = await HU.findOne({where: {id: idHU}});
         if(!temp){
             const result = await Result.create({urlimage: fileInput.path, sprintId: sprint.id});
-                    console.log(Object.getOwnPropertyNames(Object.getPrototypeOf(result)));
 
                 await hu.addResult(result);
+                return res.status(200).send();
+
         }
         
     }
@@ -378,6 +396,7 @@ exports.verifyResultSM = async(req,res)=>{
         if(temp){
             temp.SMValidation = true;
             await temp.save();
+            return res.status(200).send();
         }
     }
 }
@@ -434,6 +453,31 @@ exports.addHUTeam = async (req,res,next)=>{
     
 }
 
+exports.addImprovement = async (req,res,next)=>{
+    const {improvement} = req.body;
+    const burdownImage = req.file;
+    try{
+        const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
+        const team = turn.teams[0];
+        const sprint = await Sprint.findOne({include: {model: Team, where:{id: team.id}, required: true}});
+        const result = await Result.findOne({include: {model: Sprint, where: {id: sprint.id}, required: true}});
+        sprint.improvement = improvement;
+        result.burdownChart = burdownImage.path;
+        await sprint.save();
+        await result.save();
+        return res.status(200).send();
+    }catch(err){
+        console.log("Ha habido un error en la implementacion", err);
+        fs.unlink(burdownImage.path, error=>{
+                    if(error) 
+                        console.log('error al eliminar', error)
+                    });
+                    return res.status(500).send();
+    }
+    
+
+}
+
 exports.continueActivity = async (req,res,next) =>{
     const turn = await Turn.findOne({where: {id: req.params.idTurno}});
     if(turn.state === 6){
@@ -444,7 +488,8 @@ exports.continueActivity = async (req,res,next) =>{
         turn.timeLeftState = getTime(turn)
 
     }
-    await turn.save()
+    await turn.save();
+    socket.continueActivity(turn.id);
 
     return res.status(200).send();
 

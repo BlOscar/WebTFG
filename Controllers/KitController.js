@@ -55,7 +55,8 @@ exports.seeKit = (async (req,res,next)=>{
     }
 })
 exports.addKit = (async (req,res,next)=>{
-    const {name, objetive, quantity} = req.body;
+    const {name, quantity} = req.body;
+    const objetive = req.file;
     //primero comprobamos si existen en la base de datos, si no existen lanzamos error
     try
     {
@@ -69,10 +70,15 @@ exports.addKit = (async (req,res,next)=>{
         if(quantity <= 0){
             return res.status(400).json({error: "se necesita tener minimo un kit"});
         }
-        const kit = await Kit.create({name, objetive, userId: req.user.id, quantity});
+        const kit = await Kit.create({name, objetive: objetive.path, userId: req.user.id, quantity});
         return res.status(200).json({status: "success", name: kit.id});
     }catch(err){
         console.log(err);
+        fs.unlink(objetive.path, error=>{
+            if(error) 
+                console.log('error al eliminar', error)
+            });
+            return res.status(err.statusCode || 500).send();
     }
     
     

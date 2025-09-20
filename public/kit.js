@@ -1,19 +1,19 @@
 document.getElementById("kit-form").addEventListener("submit", async (e) =>{
     e.preventDefault();
-    const objetive = document.getElementById("necesidades").value;
+    const objetive = document.getElementById("necesidades").files[0];
     const name = document.getElementById("name").value;
-        const quantity = document.getElementById("quantity").value;
+    const quantity = document.getElementById("quantity").value;
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("objetive", objetive);
+    formData.append("quantity", quantity); 
+    debugger;
 
     const res = await fetch("http://localhost:8000/kit/api/add",{
         method:"POST",
         headers:{
-        "Content-Type":"application/json"
         },
-        body: JSON.stringify({
-            name: name,
-            objetive: objetive,
-            quantity: quantity
-            })
+        body: formData
             });
     if(res.ok){
         

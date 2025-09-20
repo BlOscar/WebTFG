@@ -12,7 +12,7 @@
     <div class="container-grid container">
         <h2>Kit:</h2>
         <h5>Nombre: <%= kit.name %></h5>
-        <h5>Necesidades: <%= kit.objetive %></h5>
+        <h5>Necesidades: <a href="/<%= kit.objetive %>">Ver Archivo</a></h5>
         <h5>Historias de Usuario: </h5>
 
         <div class="scroll-container" style="padding: 10px; margin-bottom: 20px;">
@@ -43,7 +43,7 @@
 
             <table>
                 <tr>
-                    <th>Nombre Manual</th>
+                    <th>Nombre </th>
                     <th>Manuales</th>
                 </tr>
                 <% if(boxLego.length != 0){ %>

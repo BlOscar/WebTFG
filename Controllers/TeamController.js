@@ -2,6 +2,10 @@ const {User} = require('../Models/User');
 const {Team} = require('../Models/Team');
 const {Turn} = require('../Models/Turn');
 const {TeamRole} = require('../enums/teamRoles');
+const { Sprint } = require('../Models/Sprint');
+const { Result } = require('../Models/Result');
+const { HU } = require('../Models/HistoriaUsuario');
+const { Kit } = require('../Models/Kit');
 
 
 exports.getTeams = async (req,res,next) =>{
@@ -40,7 +44,12 @@ exports.getTeams = async (req,res,next) =>{
     }
 }
 exports.showTeam = async(req,res,next) =>{
-    const team = await Team.findOne({where: {id: req.params.id}, include: {model: User, required: false}});
+    const team = await Team.findOne({where: {id: req.params.id}, include: [{model: User, required: false}, {model: Sprint, required: false, include: {
+                                            model: Result, required: true, include:{
+                                                model: HU, required: true
+                                                }
+                                            }
+                                        }, {model: Kit, required:true}]});
     const user = await User.findByPk(req.user.id);
     if(req.user.role === 'profesor'){
         res.render('users/showTeam.ejs',{team,existInTeam: false});
@@ -57,11 +66,22 @@ exports.showTeam = async(req,res,next) =>{
 }
 exports.joinTeam = async (req,res,next) =>{
     try{
-    const turn = await Turn.findOne({where: {id: req.params.id}, include: [{model: Team, required: true}, {model: User, require: false}]});
+    const turn = await Turn.findOne({where: {id: req.params.id}, include: [{model: Team, required: true, include: {model:User, required: false}}, {model: User, require: false}]});
     if(!turn){
         return res.status(401).send();
     }
-    
+    let isTrue = true;
+    turn.teams.forEach(t=>{
+        if(t.users){
+            const temp = t.users.find(p=> p.id === req.user.id);
+            if(temp){
+                isTrue = false;
+            }
+        }
+    })
+    if(!isTrue){
+        return res.status(409).send();
+    }
     const team = await Team.findOne({where: {id: req.params.idTeam}, include: {model: User, required: false}});
     if(!team){
         return res.status(401).send();
@@ -101,7 +121,7 @@ exports.joinTeam = async (req,res,next) =>{
                         roleSelection = roleSelection.filter(x=> x !== TeamRole.Developer);                        
                     }
                     await team.addUser(user, {through: {role: roleSelection[Math.floor(Math.random() * roleSelection.length)]}});
-                
+                    return res.status(200).send();
             }else{
                 return res.status(409).send();
             }

@@ -7,12 +7,17 @@
 
 </head>
 <body>
+
+    <% if(SMWrite){ %>
+        
+    <%}%>
+
     <table>
         <tr>
             <th>Posicion</th>
             <th>Nombre HU</th>
             <th>Acción</th>
-            <%if(HuSprints.results){%>
+            <%if(HuSprints){%>
                 <th>Resultados</th>
             <%}%>
         </tr>
@@ -20,14 +25,17 @@
         HuSprints.sort((x, y) => x.SprintHU.position - y.SprintHU.position).forEach(hu=>{ %>
             <tr>
                 <td><%=hu.SprintHU.position%></td>
-                <td><%=hu.name%></td>
+                <td class="nameHU"><%=hu.name%></td>
                 <td>
                 <button onclick='seeHU(<%-JSON.stringify(hu)%>)'>ver</button>
                 </td>
-                <% console.log(JSON.stringify(hu));
-                if(hu.results){%>
                 <td>
+                <%if(hu.results && hu.results.length !== 0){%>
+                    
                     <%hu.results.forEach(result =>{ %>
+                        <%if(SMWrite && !result.SMValidation){%>
+                            <button target= "button" onclick="approveHU(<%=hu.id%>)" class="button-container" style="background-color: lightblue;">Aprobar HU</button>
+                        <%}%>
                         <img src="/<%=result.urlimage%>" style="max-width: 100px; max-height: 100px;">
                         <%if(result.ClientValidation){%>
                             <h6 style="color: lightgreen;">Validado</h6>
@@ -36,64 +44,82 @@
 
                         <%}%>
                     <%})%>
+                <%}else{%>
+                    <% if(turn.state === 4){
+            if(devWrite){ %>
+            <input type="file" class="fileInput" accept="image/*" style="display: none">
+            <button target= "button" onclick="SubmitImage(this)" class="button-container" style="background-color: lightblue;">Tomar Foto</button>
+            <%}}%>
                 </td>
-                <%}%>
             </tr>
-    <%})}%>
+    <%}})}%>
         </table>
 
     <dialog id="hu_view">
         <div class="header">
-            <h6>M</h6>
-            <strong id="nameHU" style="font-size: 10px;">HU 1.1: Chalet</strong>
-            <h6>M</h6>
+            <p id="priority-content" style="font-size: xx-large;">M</p>
+            <p id="dialogHU" style="font-size: xx-large;">M</p>
+            <p id="size-content" style="font-size: xx-large;">0</p>
         </div>
   
         <div>
-
+            <p id="hu-description"></p>
             <img id="hu_image" src="" class="image">
     
         </div>
-        <% if(devWrite){ %>
-            <input type="file" id="fileInput" accept="image/*" style="display: none">
-            <button target= "button" onclick="document.getElementById('fileInput').click()" class="button-container" style="background-color: lightblue;">Tomar Foto</button>
-        <%}else if(SMWrite){%>
-            <button target= "button" onclick="approveHU()" class="button-container" style="background-color: lightblue;">Aprobar HU</button>
-
-        <%}%>
+        
     </dialog>
         <script defer>
             function seeHU(hu){
+                const temp = <%- JSON.stringify(Hus); %>
+                const temp2 = temp.find(x=> x.id === hu.id);
                 const dialog = document.getElementById('hu_view');
-                document.getElementById('nameHU').textContent = hu.name;
-                document.getElementById('hu_image').src ='/'+ hu.imageUrl;
+                debugger;
+                document.getElementById('dialogHU').textContent = temp2.name;
+                document.getElementById('hu_image').src ='/'+ temp2.imageUrl;
+                document.getElementById('hu-description').textContent = temp2.description;
+                document.getElementById('priority-content').textContent =temp2.priority;
+                document.getElementById('size-content').textContent =temp2.size;
                 dialog.showModal();
             }
 
             
             const HUs = <%- JSON.stringify(HuSprints); %>
-            async function approveHU(){
-            const name = document.getElementById('nameHU').textContent;
-            const hu = HUs.find(p=> p.name === name);
-            debugger;
-            const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/verifyResultSM`,{
-                method:"PUT",
-                headers:{
-                            "Content-Type":"application/json"
+            async function approveHU(id){
+                debugger;
+                const hu = HUs.find(p=> p.id === id);
+                debugger;
+                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/verifyResultSM`,{
+                    method:"PUT",
+                    headers:{
+                                "Content-Type":"application/json"
 
-                },
-                body: JSON.stringify({
-                    idHU: hu.id
-                })
-                })
-
+                    },
+                    body: JSON.stringify({
+                        idHU: hu.id
+                    })
+                    })
+                    if(res.ok){
+                location.reload();
+            }
+            }
+            
+            function SubmitImage(button){
+                const fileInput = button.parentElement.querySelector('.fileInput');
+                fileInput.click();
             }
 
-            document.getElementById("fileInput").addEventListener('change', async (e)=>{
-                const fileInput = document.getElementById("fileInput").files[0];
-                const name = document.getElementById('nameHU').textContent;
-                debugger;
-                const hu = HUs.find(p=> p.name === name);
+            document.addEventListener('change', async (e)=>{
+                                debugger;
+
+                if (e.target && e.target.classList.contains('fileInput')) {
+                const file = e.target;
+                const fileInput = file.files[0];
+                if(fileInput){
+                    const row = file.closest('tr');
+                    const nameCell = row.querySelector('.nameHU');
+                    const name = nameCell.textContent.trim();
+                    const hu = HUs.find(p=> p.name === name);
                 const formData = new FormData();
                     formData.append("fileInput", fileInput);
                     formData.append("idHU", hu.id);
@@ -103,6 +129,10 @@
                 },
                 body: formData
                 })
-            });
+                }
+                const name = document.getElementById('nameHU').textContent;
+                debugger;
+                
+            }});
         </script>
 </body>

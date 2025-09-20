@@ -2,12 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const routes = require('./Routes/index');
+const {Server} = require('socket.io');
+const { createServer } = require('http');
 
 
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const dotenv = require('dotenv');
+dotenv.config();
+
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
 require('./middleware/passport');
@@ -17,6 +21,9 @@ require('./middleware/passport');
 
 const app = express();
 app.use(cookieParser());
+const server = createServer(app);
+const io = new Server(server);
+const socket = require('./middleware/socket');
 
 // Configurar middleware
 app.use(passport.initialize());
@@ -43,31 +50,20 @@ app.get('/', (req, res) => {
 
 
 
-//middleware para manejar tokens
-function verificarToken(req,res,next){
-    const envPath = path.resolve(process.cwd() + "/.vscode/", '.env');
-    
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    
-    const envConfig = dotenv.parse(envContent);
-    if(envConfig.TokenId){
-        const decoded = jwt.verify(envConfig.TokenId,'secret');
-        req.user = decoded;
-        next();
-    }
-    
-}
+
 
 // Middleware para manejar errores
 defaultErrorHandler = (error, req, res, next) => {
     console.error("Error:", error.message || error);
-    res.status(500).send("Error interno del servidor");
+    res.status(500).send("Error interno del servidor\n<a href='/menu'>Regresar al menu</a>");
 };
 app.use(defaultErrorHandler);
 
+socket.setUpIo(io);
+
 // Servidor
 const PORT = 8000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 

@@ -17,7 +17,6 @@ const { Op } = require('sequelize');
 exports.register = (async (req,res,next) =>{
     try{
         const {username, name, email, password, role} = req.body;
-        //Comprobamos si existe en este contexto
         let temp = await User.findOne({where: {email}});
         if(!temp){
             temp = await User.findOne({where: {username}});
@@ -31,14 +30,17 @@ exports.register = (async (req,res,next) =>{
                 return res.status(200).json({'success': 'patata'})
             }else
             {
-                console.log("ya existe alguien con ese nickname");
+                console.log("Se ha intentado crear un usuario con un username existente");
+                return res.status(409).send("ya existe alguien con ese nickname");
             }
         }else
         {
             res.status(409).json({error: "ya existe alguien con ese correo"});
         }
     }catch(err){
+        console.log("Ha habido un problema en la creacion de un usuario");
         console.log(err);
+        return res.status(500).send();
     }
 });
 exports.see = (req,res)=>{
@@ -56,12 +58,12 @@ exports.getMenu = async (req, res) => {
 };
 
 async function MenuTeacher(req,res){
-    const turno = await Turn.findAll({where: {startDate: {[Op.gt]: Date.now()}}});
+    const turno = await Turn.findAll({where: {[Op.or]:[{startDate: { [Op.gt]: Date.now() + 2 * 60 * 60 * 1000}}, {[Op.and]: [{isStarted: true},{state: {[Op.ne]: -1}}]}]}});
     res.render('users/Profesor/menu', {turno, name: req.user.name});
 }
 
 async function MenuStudent(req,res) {
-    const turno = await Turn.findAll(   {where: {startDate: {[Op.gt]: Date.now()}},
+    const turno = await Turn.findAll(   {where: {startDate: {[Op.gt]: Date.now() + 2 * 60 * 60 * 1000}},
                                         include: [  {model: User, where: {id: req.user.id},required: true},
                                                     {model: Team, include: 
                                                         {model: User,where: {id: req.user.id}, require: false},
@@ -76,7 +78,7 @@ async function MenuStudent(req,res) {
         turnoList.push([exists, t]);
     })
     
-    res.render('users/Student/menu', {turnoList, name: req.user.name});
+    res.render('users/Student/menu', {turnoList, user: req.user});
 }
 
     
@@ -95,19 +97,28 @@ exports.login = (async (req,res,next) =>{
             return res.status(401).json({error: "unauthorized"});
         }
         const isTeacher = user.role === "profesor";
-            const token = jwt.sign({email: user.email, id: user.id}, 'secret');
+            const token = jwt.sign({email: user.email, id: user.id}, process.env.JWT_SECRET,{expiresIn: process.env.JWT_EXPIRES});
             res.cookie('token', token, {
                 httpOnly: true,
-                maxAge: 3600000
+                maxAge: 24*60*60*1000
               });
             res.status(200).json({
                 status: "success",
                 tokenId: token, 
                 isTeacher: isTeacher,
+                role: user.role,
+                id: user.id,
                 message: "Login exitoso"});
         res.end();
     }
     }catch(err){
+        console.log("Ha habido un problema en el inicio de sesion de un usuario");
         console.log(err);
+        return res.status(500).send();
     }
+});
+
+exports.logout = ((req,res,next)=>{
+    req.cookies.token = "";
+    res.render('users/login');
 });

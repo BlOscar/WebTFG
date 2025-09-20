@@ -8,6 +8,7 @@
 <body>
     <div class="container-grid container text-center">
     <h3>Equipo: <%=team.name%></h3>
+    <h3>Kit Asociado: <%=team.kit.name%></h3>
     <table>
         <tr>
             <th>
@@ -34,5 +35,26 @@
         <%}%>
 
     </table>
+    <%if(team.sprint){ %>
+            <table>
+                <tr>
+                    <th>nombre HU</th>
+                    <th>imagen HU</th>
+                    <th>Priorizacion</th>
+                    <th>Estimacion</th>
+                </tr>
+                <% 
+                team.sprint.results.forEach(result =>{
+                    if(result.SMValidation){%>
+                    <tr>
+                        <td><%=result.HU.name%></td>
+                        <td><img src="/<%=result.urlimage%>" /></td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                <%}})%>
+                </table>
+        <%}%>
     </div>
 </body>
