@@ -63,7 +63,7 @@ router.delete('/kit/api/removeBox', passport.authenticate('jwt', {session: false
 //gets turnoController
 router.get('/turno/addTurno',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.seeCreateTurno);
 router.get('/turno/:id/show',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.seeTurno);
-
+router.get('/turno/seepastTurn',passport.authenticate('jwt', {session: false}),verifyRole('profesor'),turnoRoute.seeTurnFinished);
 router.put('/turno/api/:idTurn/startActivity',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.startActivity );
 
 router.post('/turno/api/add',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.createTurno);

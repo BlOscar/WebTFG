@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+    <div class="header" style="background-color: lightslategrey;">
+        <h6>usuario: <%=name%></h6>
+        <h6>Rol: Profesor</h6>
+        <a href="/logout" class="btn-redirect">Cerrar sesion</a></div>
+    </div>
+    <div class="container">
+        <div class="container-grid">
+            <a href="/menu" class="btn-redirect">Regresar a menu</a>
+            <h3>Lista de turnos pasados</h3>
+            <table style="table-layout: fixed;">
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            <%turn.forEach(t=>{%>
+                <tr>
+                    <td><%=t.name%></td>
+                    
+                        <%if(t.isStarted && t.state === -1){%>
+                            <td>
+                                <p style="color: green;">Finalizado</p>
+                            </td>
+                            <td>
+                                <a href="/activity/<%=t.id%>/session" class="btn-redirect">Ver resultados</a>
+                            </td>
+                        <%}else if(!t.isStarted){%>
+                            <td>
+                            <p style="background-color:brown;">Sin Iniciar</p>
+                            </td>
+                            <td><a href="/turno/<%= t.id %>/show" class="btn-redirect"><h4>Ver turno</h4></a></td>        
+                        <%}%>
+                    </td>
+                </tr>
+            <%})%>
+            </table>
+        </div>
+    </div>
+
+</body>

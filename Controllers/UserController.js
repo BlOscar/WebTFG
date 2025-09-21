@@ -63,7 +63,7 @@ async function MenuTeacher(req,res){
 }
 
 async function MenuStudent(req,res) {
-    const turno = await Turn.findAll(   {where: {startDate: {[Op.gt]: Date.now() + 2 * 60 * 60 * 1000}},
+    const turno = await Turn.findAll(   {where: {[Op.or]:[{startDate: { [Op.gt]: Date.now() + 2 * 60 * 60 * 1000}}, {[Op.and]: [{isStarted: true},{state: {[Op.ne]: -1}}]}]},
                                         include: [  {model: User, where: {id: req.user.id},required: true},
                                                     {model: Team, include: 
                                                         {model: User,where: {id: req.user.id}, require: false},

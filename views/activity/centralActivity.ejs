@@ -16,7 +16,7 @@
         <h3 class="text-center">Actividad: <%=turn.name%></h3>
         <h6 class="text-left">Fase Actual: <%=state[0]%></h6>
         <p id="demo"></p>
-        <table>
+        <table style="table-layout: fixed;">
             <tr>
                 Lista Equipos
             </tr>
@@ -58,8 +58,12 @@
                         <td><%=result.HU.name%></td>
                         <td><img src="/<%=result.urlimage%>" /></td>
                         <td>
-                            <%if(turn.state === -1){%>
-                                <img src="/<%=result.burdownChart%>" />
+                            <%if(turn.state === -1){
+                                if(result.ClientValidation){%>
+                                    <h6 style="color: green">Validado</h6>
+                                <%}else{%>
+                                    <h6 style="color: red">No Validado</h6>
+                                <%}%>
                             <%}else if(isValidate){
                                 if(!result.ClientValidation){%>
 
@@ -74,10 +78,15 @@
                     </tr>
                 <%}})%>
                 </table>
+                </td>
+                <td><p>Retrospectiva</p>
+                    <p><%=team.sprint.improvement%></p></td>
                 <%}else {%>
                 <h6>no hay nada</h6>
-                <%}%>
                 </td>
+                <%}%>
+                
+                
             </tr>
         <%})%>
         </table>

@@ -194,7 +194,7 @@ exports.addBox = (async (req,res,next)=>{
     }).then(async ([box, isCreated])=>{
         if(isCreated){
             for(let i = 0; i< manualUrl.length; i++){
-                await ManualBox.create({name: `${name}-${i}`, urlPDF: manualUrl[i].path, legoBoxId: box.id});
+                await ManualBox.create({name: `${name}-${i+1}`, urlPDF: manualUrl[i].path, legoBoxId: box.id});
             };
             return res.status(200).json({status: "success"});
         }

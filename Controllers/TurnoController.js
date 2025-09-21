@@ -120,7 +120,10 @@ exports.seeCreateTurno = (async (req,res,next)=>{
         console.log(err);
     }
 })
-
+exports.seeTurnFinished = (async (req,res,next)=>{
+    const turn = await Turn.findAll({where: {[Op.or]:[{startDate: { [Op.lte]: Date.now() + 2 * 60 * 60 * 1000}}, {[Op.and]: [{isStarted: true},{state: {[Op.eq]: -1}}]}]}});
+    res.render('users/Profesor/seePastTurns.ejs',{turn, name: req.user.name});
+})
 exports.createTurno = (async (req,res,next) =>{
     try{
         const {name, startDate, kitList, teacherName} = req.body;
@@ -139,7 +142,7 @@ exports.createTurno = (async (req,res,next) =>{
         }
         let kit;
         let teams = [];
-        let k = 0;
+        let k = 1;
         for(let i = 0; i<kitList.length; i++){
             kit = await Kit.findOne({where: {id: kitList[i]}});
             if(!kit){

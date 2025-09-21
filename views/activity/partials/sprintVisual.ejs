@@ -100,8 +100,8 @@
                     })
                     })
                     if(res.ok){
-                location.reload();
-            }
+                        window.location.reload();
+                    }
             }
             
             function SubmitImage(button){
@@ -130,8 +130,9 @@
                 body: formData
                 })
                 }
-                const name = document.getElementById('nameHU').textContent;
-                debugger;
+                if(res.ok){
+                    window.location.reload();
+                }
                 
             }});
         </script>

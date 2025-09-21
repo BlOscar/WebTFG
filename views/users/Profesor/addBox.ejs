@@ -11,7 +11,7 @@
         <form id="Box-form" enctype="multipart/form-data">
             <label for="name" class="input-form-label">nombre</label>
             <input type="text" id= "name" required>
-            <label for="productId" class="input-form-label">nombre</label>
+            <label for="productId" class="input-form-label">numero del producto</label>
             <input type="number" id= "productId" required>
             <label for="manualUrl" class="input-form-label"></label>
             <input type="file" accept="application/pdf" id = "manualUrl" required multiple>
@@ -23,6 +23,7 @@
                 <% }) %>
             </select>
             <button type="submit">Add HU</button>
+            <a href="/menu" class="btn-redirect">Regresar a menu</a>
         </form>
     </div>
 </body>

@@ -174,7 +174,7 @@ exports.seeStudentActivity = async (req,res,next) =>{
             const HuSprint = await Sprint.findOne({where: {id: sprintsE.id},include: [{model: HU, required:true, include: {model:Result, where: {SprintId: sprintsE.id},required: false}}]});
             instructions = representScenarioSprint(role);
             views = allowedViewsEjecution[role];
-            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit, Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: HuSprint.HUs});
+            res.render('activity/Lecture.ejs', {turn, state, instructions: instructions[0], views, view, kit, Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: HuSprint.HUs});
 
             break;
         case 5:
@@ -192,7 +192,7 @@ exports.seeStudentActivity = async (req,res,next) =>{
             views = allowedViewsReview[role];
             const sprintsR = await Sprint.findOne({include: [{model: Team, where: {id: team.id}, required: true}]});
             const HuSprints = await Sprint.findOne({where: {id: sprintsR.id},include: [{model: HU, required:true, include: {model:Result, where: {SprintId: sprintsR.id},required: false}}]});
-            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit,Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: HuSprints.HUs});
+            res.render('activity/Lecture.ejs', {turn, state, instructions: instructions[0], views, view, kit,Hus, poWrite: instructions[2], devWrite: instructions[1], SMWrite: instructions[3], HuSprints: HuSprints.HUs});
 
 
             break;
@@ -209,7 +209,7 @@ exports.seeStudentActivity = async (req,res,next) =>{
             state = ['Retrospectiva', role];
             instructions = representScenarioR(role, view);
             views = allowedViewsR[role];
-            res.render('activity/Lecture.ejs', {turn, state, instructions, views, view, kit,SMWrite: true});
+            res.render('activity/Lecture.ejs', {turn, state, instructions: instructions[0], views, view, kit,SMWrite: instructions[3]});
             break;
         default: 
             throw Error;
@@ -361,53 +361,88 @@ de leer las suyas si no lo ha hecho todavía. Después, comenzar juntos el paso 
     }
 }
 function representScenarioR(role, view){
-    
-}
-
-exports.addResultSprint = async(req,res)=>{
-    const {idHU} = req.body;
-    const fileInput = req.file;
-    const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
-    const role = turn.teams[0].users[0].TeamStudent.role;
-    const team = turn.teams[0];
-    if(role === TeamRole.Developer && turn.state === 4){
-        const sprint = await Sprint.findOne({include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
-        const temp = await Result.findOne({include: [{model: HU, where:{id: idHU}, required: true},{model: Sprint, where: {id: sprint.id}, required: true}]});
-        const hu = await HU.findOne({where: {id: idHU}});
-        if(!temp){
-            const result = await Result.create({urlimage: fileInput.path, sprintId: sprint.id});
-
-                await hu.addResult(result);
-                return res.status(200).send();
-
-        }
-        
+    let temp;
+    switch(role){
+        case TeamRole.Developer: 
+            temp = `En esta fase el equipo deberá de comunicarse entre ellos sobre los problemas que han surgido durante el Sprint y como se han solventado.\n
+            Adicionalemente, el Scrum Master tendrá que subir el burdown chart creado anteriormente e introducir las mejoras que podrian haber hecho durante el transcuros del Sprint. `;
+            return [temp,false,false,false]
+        case TeamRole.ProductOwner: 
+            temp = `En esta fase el equipo deberá de comunicarse entre ellos sobre los problemas que han surgido durante el Sprint y como se han solventado.\n
+            Adicionalemente, el Scrum Master tendrá que subir el burdown chart creado anteriormente e introducir las mejoras que podrian haber hecho durante el transcuros del Sprint. `;
+            return [temp,false,false,false]
+        case TeamRole.ScrumMaster: 
+            temp = `En esta fase el equipo deberá de comunicarse entre ellos sobre los problemas que han surgido durante el Sprint y como se han solventado.\n
+            Adicionalemente, tendrás que subir el burdown chart creado anteriormente e introducir las mejoras que podrían haber hecho durante el transcuros del Sprint. `;
+            return [temp,false,false,false]
     }
 }
 
-exports.verifyResultSM = async(req,res)=>{
-    const {idHU} = req.body;
-    const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
-    const role = turn.teams[0].users[0].TeamStudent.role;
-    const team = turn.teams[0];
-    if(role === TeamRole.ScrumMaster){
-        const sprint = await Sprint.findOne({include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
-        const temp = await Result.findOne({include: [{model: HU, where:{id: idHU}, required: true},{model: Sprint, where: {id: sprint.id}, required: true}]});
-        if(temp){
-            temp.SMValidation = true;
-            await temp.save();
-            return res.status(200).send();
+exports.addResultSprint = async(req,res)=>{
+        const {idHU} = req.body;
+        const fileInput = req.file;
+        const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
+        const role = turn.teams[0].users[0].TeamStudent.role;
+        const team = turn.teams[0];
+    try{
+        
+        if(role === TeamRole.Developer && turn.state === 4){
+            const sprint = await Sprint.findOne({include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
+            const temp = await Result.findOne({include: [{model: HU, where:{id: idHU}, required: true},{model: Sprint, where: {id: sprint.id}, required: true}]});
+            const hu = await HU.findOne({where: {id: idHU}});
+            if(!temp){
+                const result = await Result.create({urlimage: fileInput.path, sprintId: sprint.id});
+
+                    await hu.addResult(result);
+                    return res.status(200).send();
+            }
+            
         }
+    }catch(err){
+        console.log("Ha habido un error en la creacion del resultado" + err);
+        fs.unlink(fileInput.path, error=>{
+                    if(error) 
+                        console.log('error al eliminar', error)
+                    });
+        return res.status(500).send();
+    }
+    
+}
+
+exports.verifyResultSM = async(req,res)=>{
+    try{
+        const {idHU} = req.body;
+        const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
+        const role = turn.teams[0].users[0].TeamStudent.role;
+        const team = turn.teams[0];
+        if(role === TeamRole.ScrumMaster){
+            const sprint = await Sprint.findOne({include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
+            const temp = await Result.findOne({include: [{model: HU, where:{id: idHU}, required: true},{model: Sprint, where: {id: sprint.id}, required: true}]});
+            if(temp){
+                temp.SMValidation = true;
+                await temp.save();
+                return res.status(200).send();
+            }
+        }
+    }catch(err){
+        console.log("Ha habido un error en la verificacion del resultado" + err);
+        return res.status(500).send();
     }
 }
 
 exports.verifyResult = async(req,res)=>{
-    const {idResult} = req.body;
-    const result = await Result.findOne({where: {id: idResult}});
-    if(result){
-        
+    try{
+        const {idResult} = req.body;
+        const result = await Result.findOne({where: {id: idResult}});
+        if(result){
+            
             result.ClientValidation = true;
             await result.save();
+            return res.status(200).send();
+        }
+    }catch(err){
+        console.log("Ha habido un error en la verificacion del resultado" + err);
+        return res.status(500).send();
     }
 }
 
@@ -416,40 +451,56 @@ exports.addHUSprint = async (req,res,next)=>{
     const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
     const role = turn.teams[0].users[0].TeamStudent.role;
     const team = turn.teams[0];
-    if(role === TeamRole.ScrumMaster){
-        const Hu = await HU.findOne({where: {id:huId}, include:  {model: Team, where: {id: team.id}, required: true}});
-        if(!Hu){
-            return res.staus(404).send();
+    try{
+        if(role === TeamRole.ScrumMaster){
+            const Hu = await HU.findOne({where: {id:huId}, include:  {model: Team, where: {id: team.id}, required: true}});
+            if(!Hu){
+                return res.staus(404).send();
+            }
+            let sprint = await Sprint.findOne({where: {name: `${turn.id}-${team.id}`},include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
+            if(!sprint){
+                sprint = await Sprint.create({name: `${turn.id}-${team.id}`, objetive: '', improvement: '', teamId: team.id});
+                await sprint.addHU(Hu, {through: {position: 1}});
+            }else{
+                const lenght = sprint.HUs.length;
+                await sprint.addHU(Hu, {through: {position: lenght+1}});
+            }
+            return res.status(200).send();
         }
-        let sprint = await Sprint.findOne({where: {name: `${turn.id}-${team.id}`},include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
-        if(!sprint){
-            sprint = await Sprint.create({name: `${turn.id}-${team.id}`, objetive: '', improvement: '', teamId: team.id});
-            await sprint.addHU(Hu, {through: {position: 1}});
-        }else{
-            const lenght = sprint.HUs.length;
-            await sprint.addHU(Hu, {through: {position: lenght+1}});
-        }
+    }catch(err){
+        console.log("Ha habido un error en la creacion del sprint" + err);
+        return res.status(500).send();
     }
+    
 }
 exports.addHUTeam = async (req,res,next)=>{
     const {huId, priority, size} = req.body;
     const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
     const role = turn.teams[0].users[0].TeamStudent.role;
     const Hu = await HU.findOne({where: {id:huId}});
-    if(!Hu){
+    if(!turn || !Hu){
         return res.staus(404).send();
     }
-    const team = turn.teams[0];
-    const HUTeam = await HU.findOne({where: {id:huId}, include:{model: Team, where: {id: team.id}}});
-    if(HUTeam && role === TeamRole.Developer){
-        if(size > 0 && !priority){
-            HUTeam.teams[0].TeamHU.size = size;
-            await HUTeam.teams[0].TeamHU.save();
+    try{
+        const team = turn.teams[0];
+        const HUTeam = await HU.findOne({where: {id:huId}, include:{model: Team, where: {id: team.id}}});
+        if(HUTeam && role === TeamRole.Developer){
+            if(size > 0 && !priority){
+                HUTeam.teams[0].TeamHU.size = size;
+                await HUTeam.teams[0].TeamHU.save();
+            }
+            return res.status(200).send();
+        }else if(!HUTeam && role === TeamRole.ProductOwner){
+            //solamente puede ser cuando esta con el PO
+            await team.addHU(Hu, {through: {priority: priority, size: 0}});
+            return res.status(200).send();
+
         }
-    }else if(!HUTeam && role === TeamRole.ProductOwner){
-        //solamente puede ser cuando esta con el PO
-        await team.addHU(Hu, {through: {priority: priority, size: 0}});
+    }catch(err){
+        console.log("Ha habido un error en la creacion del sprint" + err);
+        return res.status(500).send();
     }
+    
     
 }
 
