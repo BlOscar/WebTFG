@@ -408,6 +408,31 @@ exports.addResultSprint = async(req,res)=>{
     }
     
 }
+exports.eliminateResultSM = async(req,res)=>{
+    try{
+        const {idHU} = req.body;
+        const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
+        const role = turn.teams[0].users[0].TeamStudent.role;
+        const team = turn.teams[0];
+        if(role === TeamRole.ScrumMaster){
+            const sprint = await Sprint.findOne({include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
+            const temp = await Result.findOne({include: [{model: HU, where:{id: idHU}, required: true},{model: Sprint, where: {id: sprint.id}, required: true}]});
+            fs.unlink(temp.urlimage, error=>{
+                    if(error) 
+                        console.log('error al eliminar', error);
+                        return res.status(500).send();
+                    });
+                
+            await temp.destroy();
+            return res.status(200).send();
+        }else{
+            return res.status(401).send();
+        }
+    }catch(err){
+        console.log("Ha habido un error en la verificacion del resultado " + err);
+        return res.status(500).send();
+    }
+}
 
 exports.verifyResultSM = async(req,res)=>{
     try{

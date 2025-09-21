@@ -64,7 +64,9 @@ exports.continueActivity = async function(idTurn){
         const users = teams[i].users;
         users.forEach(user =>{
             const userConnected = connectedUsers.find(j=>j.idUser === user.id);
-            userConnected.emit('continueActivity', {turnid: turn.id});
+            if(userConnected){
+                userConnected.emit('continueActivity', {turnid: turn.id});
+            }
         })
     }
 }

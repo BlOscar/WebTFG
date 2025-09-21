@@ -83,6 +83,9 @@ router.put('/activity/api/:idTurno/verifyResultSM',passport.authenticate('jwt', 
 router.put('/activity/api/:idTurno/verifyResult',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), ActivityRoute.verifyResult);
 router.put('/activity/api/:idTurno/nextPhase',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), ActivityRoute.continueActivity);
 
+router.delete('/activity/api/:idTurno/eliminateResultSM',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.eliminateResultSM);
+
+
 
 //teamController
 router.get('/turno/:id/showTeams', passport.authenticate('jwt', {session: false}), TeamRoute.getTeams);

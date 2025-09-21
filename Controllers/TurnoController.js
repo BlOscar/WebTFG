@@ -121,7 +121,7 @@ exports.seeCreateTurno = (async (req,res,next)=>{
     }
 })
 exports.seeTurnFinished = (async (req,res,next)=>{
-    const turn = await Turn.findAll({where: {[Op.or]:[{startDate: { [Op.lte]: Date.now() + 2 * 60 * 60 * 1000}}, {[Op.and]: [{isStarted: true},{state: {[Op.eq]: -1}}]}]}});
+    const turn = await Turn.findAll({where: {[Op.and]:[{startDate: { [Op.lte]: Date.now() + 2 * 60 * 60 * 1000}}, {[Op.and]: [{isStarted: true},{state: {[Op.eq]: -1}}]}]}});
     res.render('users/Profesor/seePastTurns.ejs',{turn, name: req.user.name});
 })
 exports.createTurno = (async (req,res,next) =>{

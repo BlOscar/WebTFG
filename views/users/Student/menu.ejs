@@ -28,7 +28,7 @@
                 <p>Fecha Inicio:<h6 name="patata[]" id="start-time<%= t[1].id%>"><%= t[1].startDate.toISOString() %></h6></p>
                 <% if(t[0]){ 
                     if(t[1].isStarted){%>
-                    <a href="/activity/<%= t.id%>/play" class="btn-redirect" style="background-color: green;">Ir a actividad</a>
+                    <a href="/activity/<%= t[1].id%>/play" class="btn-redirect" style="background-color: green;">Ir a actividad</a>
 
                     <%}else{%>
 

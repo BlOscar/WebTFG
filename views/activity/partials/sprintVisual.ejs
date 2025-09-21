@@ -34,7 +34,9 @@
                     
                     <%hu.results.forEach(result =>{ %>
                         <%if(SMWrite && !result.SMValidation){%>
-                            <button target= "button" onclick="approveHU(<%=hu.id%>)" class="button-container" style="background-color: lightblue;">Aprobar HU</button>
+                            <button target= "button" onclick="approveHU(<%=hu.id%>)" class="button-container" style="background-color: lightgreen;">Aprobar HU</button>
+
+                            <button target= "button" onclick="eliminateHU(<%=hu.id%>)" class="button-container" style="background-color: lightcoral;">Eliminar Resultado</button>
                         <%}%>
                         <img src="/<%=result.urlimage%>" style="max-width: 100px; max-height: 100px;">
                         <%if(result.ClientValidation){%>
@@ -103,6 +105,23 @@
                         window.location.reload();
                     }
             }
+            async function eliminateHU(id){
+                const hu = HUs.find(p=> p.id === id);
+                debugger;
+                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/eliminateResultSM`,{
+                    method:"DELETE",
+                    headers:{
+                                "Content-Type":"application/json"
+
+                    },
+                    body: JSON.stringify({
+                        idHU: hu.id
+                    })
+                    })
+                    if(res.ok){
+                        window.location.reload();
+                    }
+            }
             
             function SubmitImage(button){
                 const fileInput = button.parentElement.querySelector('.fileInput');
@@ -129,10 +148,11 @@
                 },
                 body: formData
                 })
-                }
                 if(res.ok){
-                    window.location.reload();
+                        window.location.reload();
+                    }
                 }
+                
                 
             }});
         </script>
