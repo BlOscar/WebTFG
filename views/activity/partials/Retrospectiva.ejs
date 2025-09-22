@@ -7,7 +7,7 @@
 
 </head>
 <body>
-    <%if(SMWrite){%>
+    <%if(SMWrite && sprint.improvement.trim() === ''){%>
         <form id="retrospective-sprint" enctype="multipart/form-data">
                         <br>
 
@@ -43,6 +43,12 @@
                 }
             })
         </script>
+    <%}else{%>
+        <h6>Analisis del sprint</h6>
+        <p><%=sprint.improvement%></p>
+        <br>
+        <h6>Burdown Chart</h6>
+        <img src="/<%=sprint.burdownChart%>" class="image"> 
     <%}%>
     
 

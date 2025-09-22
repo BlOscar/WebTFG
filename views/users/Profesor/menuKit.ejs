@@ -11,7 +11,32 @@
 
     <div class="container-grid container">
     <a href="/menu" class="btn-redirect">Regresar a menu</a>
+    <% if(canEliminate){%>
+        <button onclick="eliminatekit(<%=kit.id%>)" class="btn-redirect" style="background-color: brown; color:lightgray">Eliminar kit</button>
+        <script>
+            
+            async function eliminatekit(id){
+                debugger;
+                const res = await fetch("/kit/api/removeKit",{
+                    method:"DELETE",
+                    headers:{
+                    "Content-Type":"application/json"
+                    },
+                    body: JSON.stringify({
+                        idKit: id
+                    })
+                });
+                if(res.ok){
+                    window.location.href = "/menu";
+                }else{
+                    const response = await res.json();
+                    alert("Ha habido un error durante la eliminación: " + response.error);
+                }
+            }
+    
 
+        </script>
+    <%}%>
         <h2>Kit:</h2>
         <h5>Nombre: <%= kit.name %></h5>
         <h5>Necesidades: <a href="/<%= kit.objetive %>">Ver Archivo</a></h5>

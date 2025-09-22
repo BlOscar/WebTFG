@@ -5,6 +5,7 @@ const {LegoBox} = require('../Models/LegoBox');
 const fs = require('fs');
 const { ManualBox } = require('../Models/ManualBox');
 const { col, fn } = require('sequelize');
+const { Turn } = require('../Models/Turn');
 
 exports.see = (async (req,res,next)=>{
     try{
@@ -35,7 +36,7 @@ exports.seeKits = (async (req,res,next)=>{
 exports.seeKit = (async (req,res,next)=>{
     const kitId = req.params.id;
     try{
-        const kit = await Kit.findOne({where: {id: kitId}});
+        const kit = await Kit.findOne({where: {id: kitId}, include: {model: Turn, required: false}});
         if(!kit){
             return res.status(404).json({error: "este kit no existe"});
         }
@@ -46,9 +47,11 @@ exports.seeKit = (async (req,res,next)=>{
         boxLego.forEach(e=>{
             manuals.push(e.manualBoxes);
         })
-        console.log(""+boxLego.manualBoxes);
-        
-            res.render('users/Profesor/menuKit.ejs', {kit, HUList, boxLego, manuals});
+        let canEliminate = true;
+        if(kit.turnos.length !== 0){
+            canEliminate = false;
+        }
+            res.render('users/Profesor/menuKit.ejs', {kit, HUList, boxLego, manuals, canEliminate});
         
     }catch(err){
         console.log(err);
@@ -83,17 +86,65 @@ exports.addKit = (async (req,res,next)=>{
     
     
 });
-exports.modifyKit = (async (req,res,next)=>{
-    const {quantity} = req.body;
-    const objetiveUrl = req.file;
-    const user = await User.findOne({where: {id: req.user.id}});
+
+exports.removeKit = (async (req,res,next)=>{
     try{
 
-    }catch(err){
+    const {idKit} = req.body;
+    const turn = await Turn.findOne({include: {model: Kit, where: {id: idKit},required: true}})
+    if(turn){
+        return res.status(409).send("No se puede eliminar si esta en un turno");
+    }
+    const kit = await Kit.findOne({where: {id: idKit}, include: [{model: HU, required: false}, {model: LegoBox, required: false, include: {model: ManualBox, required: true}}]});
+
+    if(!kit){
+        return res.status(404).send("No se ha encontrado el kit");
+    }
+    if(kit.legoBoxes.length !==0){
+        kit.legoBoxes.forEach(async box=>{
+        const manuals = box.manualBoxes;
+        manuals.forEach(async manual=>{
+            fs.unlink(manual.urlPDF,async error=>{
+                if(error){
+                    console.log('error al eliminar', error);
+                    const responseError = new Error('No se ha podido eliminar');
+                    responseError.status = 401;
+                    throw responseError;
+                }
+            });
+                await manual.destroy();
+        });
+                            
+            await box.destroy();
+
+        })
+                    
 
     }
-});
-//falta eliminar kit
+    if(kit.HUs.length !==0){
+        kit.HUs.forEach(async hu=>{
+        fs.unlink(hu.imageUrl,async error=>{
+            if(error){
+                console.log('error al eliminar', error);
+                const responseError = new Error('No se ha podido eliminar');
+                responseError.status = 401;
+                throw responseError;
+            }
+            });
+            await hu.destroy();
+        });
+    }
+    await kit.removeHUs();
+    await kit.removeLegoBoxes();
+    
+
+    await kit.destroy();
+    return res.status(200).send();
+    }catch(err){
+        console.log(err);
+        return res.status(err.statusCode || 500).send();
+    }
+})
 exports.removeHU = (async (req,res,next)=>{
     try{
     const {idHU} = req.body;

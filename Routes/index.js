@@ -59,6 +59,7 @@ router.post('/kit/api/addBox',passport.authenticate('jwt', {session: false}),ver
 
 router.delete('/kit/api/removeHU',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.removeHU);
 router.delete('/kit/api/removeBox', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.removeBox);
+router.delete('/kit/api/removeKit', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), kitRoute.removeKit);
 
 //gets turnoController
 router.get('/turno/addTurno',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.seeCreateTurno);
@@ -79,11 +80,11 @@ router.post('/activity/api/:idTurno/addHUSprint',passport.authenticate('jwt', {s
 router.post('/activity/api/:idTurno/addResultSprint',passport.authenticate('jwt', {session: false}),verifyRole('alumno'),upload.single('fileInput'), ActivityRoute.addResultSprint);
 router.post('/activity/api/:idTurno/addImprovementSprint',passport.authenticate('jwt', {session: false}),verifyRole('alumno'),upload.single('burdownImage'), ActivityRoute.addImprovement);
 
-router.put('/activity/api/:idTurno/verifyResultSM',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.verifyResultSM);
+router.put('/activity/api/:idTurno/verifyResultPO',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.verifyResultPO);
 router.put('/activity/api/:idTurno/verifyResult',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), ActivityRoute.verifyResult);
 router.put('/activity/api/:idTurno/nextPhase',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), ActivityRoute.continueActivity);
 
-router.delete('/activity/api/:idTurno/eliminateResultSM',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.eliminateResultSM);
+router.delete('/activity/api/:idTurno/eliminateResultPO',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), ActivityRoute.eliminateResultPO);
 
 
 

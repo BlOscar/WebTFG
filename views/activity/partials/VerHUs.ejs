@@ -34,7 +34,7 @@
         
         <% if(poWrite){%>
                 <form id="hu-sprints" class="form-HU">
-            <select id="priority" style="width: 100%;">
+            <select id="priority" style="width: 100%; margin-right: 50px;">
                 <option value="M">M</option>
                 <option value="S">S</option>
                 <option value="C">C</option>
@@ -43,7 +43,7 @@
         <%}else{%>
             <p id="priority-content" style="font-size: xx-large;">M</p>
         <%}%>
-        <strong id="nameHU" style="font-size: xx-large">HU 1.1: Chalet</strong>
+        <strong id="nameHU" style="font-size: xx-large;  margin-left: 50px;margin-right: 50px;">HU 1.1: Chalet</strong>
         <% if(devWrite && turn.state === 3){%>
                 <form id="hu-sprints">
 
@@ -61,24 +61,24 @@
     
     </div>
     <% if(poWrite){%>
-                <div class="button-container">
+                
 
         <button style="background-color: lightblue; border: 1px;">Seleccionar</button>
-                </div>
+                
         </form>
     <%}else if(turn.state===3){
             if(SMWrite){ %>
         </form>
-        <div class="button-container" style="background-color: lightblue;">
+        
         <button target= "button" onclick="addHUSprint()"  style="background-color: lightblue; border: 1px;">Introducir en Sprint</button>
-        </div>
+        
     
 
     <%      }else if(devWrite){%>
-                <div class="button-container">
+                
 
         <button style="background-color: lightblue; border: 1px;">Introducir tamaño</button>
-                </div>
+                
         </form>
         <%}}%>
         </div>

@@ -30,15 +30,14 @@ const User = sequelize.define('user',{
 (async () => {  // IIFE - Immediatedly Invoked Function Expresión
     try {
         await sequelize.sync(); // Syncronize DB and seed if needed
-        /*const count = await User.count();
+        const count = await User.count();
         if (count === 0) {
+            const password = await bcrypt.hash("Profesor",10)
             await User.create(
-                {name: "Patata", email: "jkhkjh"}
+                {name: "Profe", username:"Profe", email: "profe@gmail.com", password: password, role: UserRole.Teacher }
             );
             console.log(`DB filled with ${c.length} user.`);
-        } else {
-            console.log(`DB exists & has ${count} users.`);
-        }*/
+        } 
     } catch (err) {
         console.log(err);
     }

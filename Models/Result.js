@@ -3,7 +3,7 @@ const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
 const {Sprint} = require('./Sprint');
 const {HU} = require('./HistoriaUsuario');
 const Result = sequelize.define('result',{
-    SMValidation: {
+    POValidation: {
         type: DataTypes.BOOLEAN, defaultValue: false
     },
     ClientValidation: {
@@ -12,10 +12,7 @@ const Result = sequelize.define('result',{
     urlimage: {
         type: DataTypes.STRING, require: true
     },
-    burdownChart: {
-        type: DataTypes.STRING, require: true
-
-    }
+    
 });
 
 Result.belongsTo(HU);

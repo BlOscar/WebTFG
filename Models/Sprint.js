@@ -13,6 +13,10 @@ const Sprint = sequelize.define('sprint',{
     },
     improvement: {
         type: DataTypes.INTEGER, require: true, unique: false
+    },
+    burdownChart: {
+        type: DataTypes.STRING, require: true
+
     }
 });
 

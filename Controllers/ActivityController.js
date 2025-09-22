@@ -209,7 +209,9 @@ exports.seeStudentActivity = async (req,res,next) =>{
             state = ['Retrospectiva', role];
             instructions = representScenarioR(role, view);
             views = allowedViewsR[role];
-            res.render('activity/Lecture.ejs', {turn, state, instructions: instructions[0], views, view, kit,SMWrite: instructions[3]});
+            const sprintTemp = await Sprint.findOne({include: [{model: Team, where: {id: team.id}, required: true}]});
+            const sprint = await Sprint.findOne({include: {model: Result, where: {sprintId: sprintTemp.id}, required: true}})
+            res.render('activity/Lecture.ejs', {turn, state, instructions: instructions[0], views, view, kit,SMWrite: instructions[3], sprint});
             break;
         default: 
             throw Error;
@@ -283,13 +285,13 @@ function representScenarioSprint(role){
 
             break;
         case TeamRole.ProductOwner:
-            temp = `En esta fase te encargarás de validar las construcciones que hayan realizado los desarrolladores y estarás en ocntacto con el Cliente por si tiene alguna pregunta. Tu no puedes participar en el Scrum diario.`;
-                return [temp,false,false,false]
+            temp = `En esta fase te encargarás de validar las construcciones que hayan realizado los desarrolladores y estarás en contacto con el Cliente por si tiene alguna pregunta. Tu no puedes participar en el Scrum diario.`;
+                return [temp,false,true,false]
 
             break;
         case TeamRole.ScrumMaster:
-            temp = `En esta fase te encargarás avisar sobre los Scrums diarios y de revisar las construcciones. Aunque el Product Owner se encargaría de revisar las construcciones, tu serás el que lo validará desde la aplicacion web.`;
-                return [temp,false,false,true]
+            temp = `En esta fase te encargarás de avisar sobre los Scrums diarios y de revisar las construcciones.`;
+                return [temp,false,false,false]
 
             break;
     }
@@ -374,7 +376,7 @@ function representScenarioR(role, view){
         case TeamRole.ScrumMaster: 
             temp = `En esta fase el equipo deberá de comunicarse entre ellos sobre los problemas que han surgido durante el Sprint y como se han solventado.\n
             Adicionalemente, tendrás que subir el burdown chart creado anteriormente e introducir las mejoras que podrían haber hecho durante el transcuros del Sprint. `;
-            return [temp,false,false,false]
+            return [temp,false,false,true]
     }
 }
 
@@ -408,13 +410,13 @@ exports.addResultSprint = async(req,res)=>{
     }
     
 }
-exports.eliminateResultSM = async(req,res)=>{
+exports.eliminateResultPO = async(req,res)=>{
     try{
         const {idHU} = req.body;
         const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
         const role = turn.teams[0].users[0].TeamStudent.role;
         const team = turn.teams[0];
-        if(role === TeamRole.ScrumMaster){
+        if(role === TeamRole.ProductOwner){
             const sprint = await Sprint.findOne({include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
             const temp = await Result.findOne({include: [{model: HU, where:{id: idHU}, required: true},{model: Sprint, where: {id: sprint.id}, required: true}]});
             fs.unlink(temp.urlimage, error=>{
@@ -434,17 +436,17 @@ exports.eliminateResultSM = async(req,res)=>{
     }
 }
 
-exports.verifyResultSM = async(req,res)=>{
+exports.verifyResultPO = async(req,res)=>{
     try{
         const {idHU} = req.body;
         const turn = await Turn.findOne({where: {id: req.params.idTurno}, include: {model: Team, required: true, include: {model: User, where: {id: req.user.id}, required: true}}});
         const role = turn.teams[0].users[0].TeamStudent.role;
         const team = turn.teams[0];
-        if(role === TeamRole.ScrumMaster){
+        if(role === TeamRole.ProductOwner){
             const sprint = await Sprint.findOne({include: [{model: Team,where: {id: team.id}, required: true}, {model: HU, required: false}]});
             const temp = await Result.findOne({include: [{model: HU, where:{id: idHU}, required: true},{model: Sprint, where: {id: sprint.id}, required: true}]});
             if(temp){
-                temp.SMValidation = true;
+                temp.POValidation = true;
                 await temp.save();
                 return res.status(200).send();
             }

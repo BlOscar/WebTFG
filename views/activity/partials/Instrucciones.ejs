@@ -1,13 +1,13 @@
 
 <body>
-    <% const manuals = kit.legoBox.manualBoxes %>
     <select id="manualInfo">
-        <%manuals.forEach(e=>{%>
-            <option value="<%= e.urlPDF %>" selected><%= e.name %> </option>
-                        <option value="<%= e.urlPDF %>" selected><%= e.name %> </option>
+        <% kit.legoBoxes.forEach(box=>{
+            const manuals = box.manualBoxes;
+            manuals.forEach(e=>{%>
+                <option value="<%= e.urlPDF %>" selected><%= e.name %> </option>
 
 
-        <%})%>
+        <%})})%>
     </select>
     <script>
         document.getElementById("manualInfo").addEventListener("change", async(e) =>{
@@ -18,7 +18,7 @@
 
         })
     </script>
-    <iframe id="manualR" style="height: 75vh; width: 100%;" src="/<%=manuals[0].urlPDF%>">
+    <iframe id="manualR" style="height: 75vh; width: 100%;" src="">
 
     </iframe>
 </body>

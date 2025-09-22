@@ -17,7 +17,7 @@ const LegoBox = sequelize.define('legoBox',{
 });
 /*un kit puede tener una o mas cajas pero una caja solo puede estar en un kit*/
 LegoBox.belongsTo(Kit, {foreignKey: 'kitId'});
-Kit.hasOne(LegoBox, {foreignKey: 'kitId'});
+Kit.hasMany(LegoBox, {foreignKey: 'kitId'});
 ManualBox.belongsTo(LegoBox);
 LegoBox.hasMany(ManualBox);
 

@@ -28,11 +28,6 @@
                 </th>
             </tr>
         <%})%>
-        <% if(existInTeam){%>
-            <h6>patata</h6>
-            <%}else {%>
-            <h6>pimienta</h6>
-        <%}%>
 
     </table>
     <%if(team.sprint){ %>
@@ -45,7 +40,7 @@
                 </tr>
                 <% 
                 team.sprint.results.forEach(result =>{
-                    if(result.SMValidation){%>
+                    if(result.POValidation){%>
                     <tr>
                         <td><%=result.HU.name%></td>
                         <td><img src="/<%=result.urlimage%>" /></td>

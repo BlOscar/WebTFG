@@ -33,7 +33,7 @@
                 <%if(hu.results && hu.results.length !== 0){%>
                     
                     <%hu.results.forEach(result =>{ %>
-                        <%if(SMWrite && !result.SMValidation){%>
+                        <%if(poWrite && !result.POValidation){%>
                             <button target= "button" onclick="approveHU(<%=hu.id%>)" class="button-container" style="background-color: lightgreen;">Aprobar HU</button>
 
                             <button target= "button" onclick="eliminateHU(<%=hu.id%>)" class="button-container" style="background-color: lightcoral;">Eliminar Resultado</button>
@@ -91,7 +91,7 @@
                 debugger;
                 const hu = HUs.find(p=> p.id === id);
                 debugger;
-                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/verifyResultSM`,{
+                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/verifyResultPO`,{
                     method:"PUT",
                     headers:{
                                 "Content-Type":"application/json"
@@ -108,7 +108,7 @@
             async function eliminateHU(id){
                 const hu = HUs.find(p=> p.id === id);
                 debugger;
-                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/eliminateResultSM`,{
+                const res = await fetch(`http://localhost:8000/activity/api/<%=turn.id%>/eliminateResultPO`,{
                     method:"DELETE",
                     headers:{
                                 "Content-Type":"application/json"
