@@ -65,10 +65,6 @@ const TeamHU = sequelize.define('TeamHU',{
         },
         defaultValue: 0
     },
-    isMinRole: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-    }
 })
 User.belongsToMany(Team, {through: TeamStudent});
 Team.belongsToMany(User, {through: TeamStudent});
