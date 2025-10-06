@@ -65,10 +65,11 @@ router.delete('/kit/api/removeKit', passport.authenticate('jwt', {session: false
 router.get('/turno/addTurno',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.seeCreateTurno);
 router.get('/turno/:id/show',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.seeTurno);
 router.get('/turno/seepastTurn',passport.authenticate('jwt', {session: false}),verifyRole('profesor'),turnoRoute.seeTurnFinished);
-router.put('/turno/api/:idTurn/startActivity',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.startActivity );
+router.put('/turno/api/:idTurn/startActivity',passport.authenticate('jwt', {session: false}),verifyRole('profesor'),TeamRoute.verifyTeams, turnoRoute.startActivity );
 
 router.post('/turno/api/add',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.createTurno);
 router.delete('/turno/api/:idTurn/removeTurn',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.removeTurn);
+router.delete('/turno/api/:id/removeStudent', passport.authenticate('jwt', {session: false}),verifyRole('profesor'),TeamRoute.removeTeam, turnoRoute.removeStudent);
 
 router.post('/turno/join',passport.authenticate('jwt', {session: false}),verifyRole('alumno'),turnoRoute.joinTurn);
 router.put('/turno/api/:id/update', passport.authenticate('jwt', {session: false}),verifyRole('profesor'), turnoRoute.updateTurno);
@@ -93,7 +94,7 @@ router.get('/turno/:id/showTeams', passport.authenticate('jwt', {session: false}
 router.get('/team/:id/showTeam', passport.authenticate('jwt', {session: false}), TeamRoute.showTeam);
 
 router.post('/api/:id/joinTeam/:idTeam',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), TeamRoute.joinTeam);
-router.delete('/api/removeStudent/:idTeam',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), TeamRoute.removeTeam);
+router.delete('/api/leaveStudent/:id',passport.authenticate('jwt', {session: false}),verifyRole('alumno'), TeamRoute.leaveTeam);
 
 module.exports = router;
 

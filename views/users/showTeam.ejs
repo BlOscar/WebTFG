@@ -9,6 +9,23 @@
     <div class="container-grid container text-center">
     <h3>Equipo: <%=team.name%></h3>
     <h3>Kit Asociado: <%=team.kit.name%></h3>
+    <%if(existInTeam){%>
+        <button onclick="leaveTeam()">Salir de equipo</button>
+        <script>
+            async function leaveTeam(){
+                const res = await fetch(`http://localhost:8000/api/leaveStudent/<%=team.id%>`,{
+                method:"DELETE",
+                headers:{
+                "Content-Type":"application/json"
+                },
+                
+            });
+            if(res.ok){
+                window.location.href='/menu';
+            }
+            }
+        </script> 
+    <%}%>
     <table>
         <tr>
             <th>

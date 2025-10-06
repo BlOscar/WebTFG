@@ -27,7 +27,7 @@ exports.register = (async (req,res,next) =>{
                 const handlePassword = await bcrypt.hash(password,10);
                 const user = await User.create({username,name,email,password: handlePassword, role});
                 console.log(`Usuario creado con email ${email} y username: ${username}`);
-                return res.status(200).json({'success': 'patata'})
+                return res.status(200).send();
             }else
             {
                 console.log("Se ha intentado crear un usuario con un username existente");
@@ -86,7 +86,6 @@ async function MenuStudent(req,res) {
 exports.login = (async (req,res,next) =>{
     const email = req.body.email;
     const password = req.body.password;
-    console.log(email, password);
     try{
         const user = await User.findOne({where: {email}});
     if(!user){

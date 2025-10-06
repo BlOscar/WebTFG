@@ -1,5 +1,5 @@
 const {User} = require('../Models/User');
-const {Team} = require('../Models/Team');
+const {Team, TeamStudent} = require('../Models/Team');
 const {Turn} = require('../Models/Turn');
 const {TeamRole} = require('../enums/teamRoles');
 const { Sprint } = require('../Models/Sprint');
@@ -52,13 +52,13 @@ exports.showTeam = async(req,res,next) =>{
                                         }, {model: Kit, required:true}]});
     const user = await User.findByPk(req.user.id);
     if(req.user.role === 'profesor'){
-        res.render('users/showTeam.ejs',{team,existInTeam: false});
+        res.render('users/showTeam.ejs',{team,existInTeam: false, isTeacher: true});
     }else{
     const exists = team.users.find(p=> p.id === user.id);
         if(exists){
-            res.render('users/showTeam.ejs',{team,existInTeam: true});
+            res.render('users/showTeam.ejs',{team,existInTeam: true, isTeacher: false});
         }else{
-            res.render('users/showTeam.ejs',{team,existInTeam: false});
+            res.render('users/showTeam.ejs',{team,existInTeam: false, isTeacher: false});
 
         }
     }
@@ -135,18 +135,17 @@ exports.joinTeam = async (req,res,next) =>{
 }
 exports.removeTeam = async (req,res,next)=>{
     try{
-        const team = await Team.findOne({where: {id: req.params.idTeam}, include: {model: User, required: false}});
+        const {userid} = req.body;
+        const team = await Team.findOne({include: [{model: Turn, where: {id: req.params.id},required: true}, {model: User, required: false}]});
         if(!team){
             return res.status(404).json({error: "no existe este equipo"});
         }
-        const students = await team.getUsers();
-        const user = await User.findByPk(req.user.id);
-        if(students.length === team.limit){
-            return res.status(401).send();
-        }
+        
+        const user = await User.findByPk(userid);
         const exists = await team.hasUser(user);
         if(exists){
-            team.removeUser(user);
+            await team.removeUser(user);
+            await next();
         }
         else{
             return res.status(404).send();
@@ -154,5 +153,77 @@ exports.removeTeam = async (req,res,next)=>{
     }catch(err){
         console.log("There was an error during the process: " + err);
         return res.status(500).send();
+    }
+}
+exports.leaveTeam = async (req,res,next)=>{
+    try{
+        const team = await Team.findOne({where: {id: req.params.id},include: [{model: User, required: false}]});
+        if(!team){
+            return res.status(404).json({error: "no existe este equipo"});
+        }
+        
+        const user = await User.findByPk(req.user.id);
+        const exists = await team.hasUser(user);
+        if(exists){
+            await team.removeUser(user);
+            return res.status(200).send();
+        }
+        else{
+            return res.status(404).send();
+        }
+    }catch(err){
+        console.log("There was an error during the process: " + err);
+        return res.status(500).send();
+    }
+}
+exports.verifyTeams = async (req,res,next)=>{
+    try{
+        const turn = await Turn.findOne({where: {id: req.params.idTurn}, include: {model: Team, required: true, include: {model: User, through: {attributes: ['teamId','userId','role']}}}});
+        if(!turn){
+            return res.status(404).send();
+        }
+        const teams = turn.teams;
+        let canStart = false;
+        teams.forEach(async team =>{
+            let existSM = false;
+            let existPO = false;
+            let existDev = false;
+            if(team.users.length >= 3){
+                canStart = true;
+                team.users.forEach(user=>{
+                    const role = user.TeamStudent.role;
+                    if(role === TeamRole.Developer){
+                        existDev = true;
+                    }else if(role === TeamRole.ProductOwner){
+                        existPO = true;
+                    }else{
+                        existSM = true;
+                    }
+                })
+                
+                if(!existSM){
+                    const devUser = team.users.find(u => u.TeamStudent.role === TeamRole.Developer);
+                    if (devUser) {
+                        devUser.TeamStudent.role = TeamRole.ScrumMaster;
+                        await devUser.TeamStudent.save();
+                    }
+                }
+                if(!existPO){
+                    const devUser = team.users.find(u => u.TeamStudent.role === TeamRole.Developer);
+                    if (devUser) {
+                        devUser.TeamStudent.role = TeamRole.ProductOwner;
+                        await devUser.TeamStudent.save();
+                    }
+                }
+            }
+        })
+        if(canStart){
+            next();
+        }else{
+            return res.status(400).send();
+        }
+
+    }catch(err){
+        console.log(err);
     }
 }

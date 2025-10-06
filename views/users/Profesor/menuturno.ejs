@@ -109,7 +109,8 @@
     <h5>Alumnos inscritos: </h5>
         <% if(students){ 
         students.forEach(student =>{ %>
-            <h6>nombre: <%= student.name %></h6>
+            <h6>nombre: <%= student.name %><button onclick="removeStudent(<%= student.id %>)">Eliminar</button>
+</h6>
         <% })
             if(!turn.isStarted){%>
                 <form id="start-activity">
@@ -163,18 +164,20 @@
     
 </body>
 <script>
-    const patata = <%- turn.id %>;
+    const turnId = <%- turn.id %>;
 
     document.getElementById('start-activity').addEventListener("submit", async (e) =>{
             e.preventDefault();
-            const res = await fetch(`http://localhost:8000/turno/api/${patata}/startActivity`,{
+            const res = await fetch(`http://localhost:8000/turno/api/${turnId}/startActivity`,{
                 method:"PUT",
                 headers:{
                 "Content-Type":"application/json"
                 }
             });
             if(res.ok){
-                window.location.href = `/activity/${patata}/session`;
+                window.location.href = `/activity/${turnId}/session`;
+            }else{
+                alert("No se ha podido iniciar la actividad, se necesita almenos un equipo con 3 alumnos");
             }
         });
     
@@ -185,7 +188,7 @@
                 const time = document.getElementById("time").value;
                 date.setHours(time.split(':')[0]);
                 date.setMinutes(time.split(':')[1]); 
-                const res = await fetch(`http://localhost:8000/turno/api/${patata}/update`,{
+                const res = await fetch(`http://localhost:8000/turno/api/${turnId}/update`,{
                 method:"PUT",
                 headers:{
                 "Content-Type":"application/json"
@@ -208,4 +211,21 @@
                     debugger;
                     
                 })
+    async function removeStudent(id){
+        debugger;
+        const res = await fetch(`http://localhost:8000/turno/api/${turnId}/removeStudent`,{
+                method:"DELETE",
+                headers:{
+                "Content-Type":"application/json"
+                },
+                body: JSON.stringify({
+                userid: id
+                })
+            });
+        if(res.ok){
+            window.location.reload();
+        }else{
+            alert("no se pudo eliminar al alumno");
+        }
+    }
 </script>

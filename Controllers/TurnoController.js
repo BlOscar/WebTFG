@@ -121,12 +121,12 @@ exports.seeCreateTurno = (async (req,res,next)=>{
     }
 })
 exports.seeTurnFinished = (async (req,res,next)=>{
-    const turn = await Turn.findAll({where: {[Op.and]:[{startDate: { [Op.lte]: Date.now() + 2 * 60 * 60 * 1000}}, {[Op.and]: [{isStarted: true},{state: {[Op.eq]: -1}}]}]}});
+    const turn = await Turn.findAll({where: {[Op.and]:[{startDate: { [Op.lte]: Date.now() + 2 * 60 * 60 * 1000}},]}});
     res.render('users/Profesor/seePastTurns.ejs',{turn, name: req.user.name});
 })
 exports.createTurno = (async (req,res,next) =>{
     try{
-        const {name, startDate, kitList, teacherName} = req.body;
+        const {name, startDate, kitList, teacherName, limit} = req.body;
         if(!kitList || !Array.isArray(kitList)){
             return res.status(400).json({error: "el turno necesita tener un minimo de un kit"});
         }
@@ -152,7 +152,7 @@ exports.createTurno = (async (req,res,next) =>{
                 
                 
                 teams.push({name: name +'-' + (k),
-                            limit: 4,
+                            limit: limit,
                             kitId: kit.id,
                             turnId: 0
                 });
@@ -217,5 +217,16 @@ exports.startActivity = async (req,res,next) =>{
     }catch(err){
         console.log(err);
     }
+}
+
+exports.removeStudent = async(req,res)=>{
+    const {userid} = req.body;
+    const turn = await Turn.findOne({where: {id: req.params.id}});
+    const user = await User.findOne({where: {id: userid}});
+    if(!turn || !user){
+        return res.status(404).send();
+    }
+    await turn.removeUser(user);
+    return res.status(200).send();
 }
 

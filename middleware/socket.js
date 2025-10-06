@@ -47,11 +47,13 @@ exports.startActivityIO = async function(idTurn){
     
     for(let i = 0; i<teams.length; i++){
         const users = teams[i].users;
-        const roomName = `room-${turn.name}-${teams[i].name}`;
+        const roomName =    `room-${turn.name}-${teams[i].name}`;
         users.forEach(user =>{
             const userConnected = connectedUsers.find(j=>j.idUser === user.id);
+            if(userConnected){
             userConnected.join(roomName);
             userConnected.emit('startActivity', {room: roomName, turnid: turn.id});
+            }
         })
     }
 }

@@ -1,24 +1,8 @@
-
+<!DOCTYPE html>
+<html lang="es">
 <body>
-    <select id="manualInfo">
-        <% kit.legoBoxes.forEach(box=>{
-            const manuals = box.manualBoxes;
-            manuals.forEach(e=>{%>
-                <option value="<%= e.urlPDF %>" selected><%= e.name %> </option>
-
-
-        <%})})%>
-    </select>
-    <script>
-        document.getElementById("manualInfo").addEventListener("change", async(e) =>{
-            e.preventDefault();
-            debugger;
-            const manualInfo = document.getElementById("manualInfo").value;
-            document.getElementById("manualR").src = "/"+manualInfo;
-
-        })
-    </script>
-    <iframe id="manualR" style="height: 75vh; width: 100%;" src="">
+    <% const instruccion = views.find(p=> p.includes(view))%>
+    <iframe style="height: 75vh; width: 100%;" src="/uploads/Instrucciones/<%=instruccion%>.pdf">
 
     </iframe>
 </body>

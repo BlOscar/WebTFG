@@ -103,15 +103,15 @@ exports.seeStudentActivity = async (req,res,next) =>{
         case 0:
             //Presentacion
             state = ['Presentacion', team.users[0].TeamStudent.role];
-            res.render('activity/Lecture.ejs', {turn, state, view: null, views: null, instructions: null});
+            res.render('activity/Lecture.ejs', {turn, state, view: null, views: null, instructions: "En esta fase el profesor os proporcionará una caja LEGO asociada a vuestro equipo y varios paquetes de cartas para realizar planning poker"});
             break;
         case 1:
             //Lectura de instrucciones
             
             const allowedViewsRead = {
-                [TeamRole.Developer]: ['Instrucciones','manual_Dev'],
-                [TeamRole.ScrumMaster]: ['manual_SM'],
-                [TeamRole.ProductOwner]: ['Necesidades','manual_PO']
+                [TeamRole.Developer]: ['Manuales','Instrucciones_Dev'],
+                [TeamRole.ScrumMaster]: ['Instrucciones_SM'],
+                [TeamRole.ProductOwner]: ['Necesidades','Instrucciones_PO']
             };
             if(view && !allowedViewsRead[role]?.some(p=> p.includes(view))){
                 return res.status(404).send();           
@@ -126,9 +126,9 @@ exports.seeStudentActivity = async (req,res,next) =>{
         case 2:
             //priorizar pila
             const allowedViewsPriorize = {
-                [TeamRole.Developer]: ['Instrucciones','manual_Dev'],
-                [TeamRole.ScrumMaster]: ['verHUs','manual_SM'],
-                [TeamRole.ProductOwner]: ['Necesidades','verHUs','manual_PO']
+                [TeamRole.Developer]: ['Manuales','Instrucciones_Dev'],
+                [TeamRole.ScrumMaster]: ['verHUs','Instrucciones_SM'],
+                [TeamRole.ProductOwner]: ['Necesidades','verHUs','Instrucciones_PO']
             };
             if(view && !allowedViewsPriorize[role]?.some(p=> p.includes(view))){
                 return res.status(404).send();           
@@ -144,9 +144,9 @@ exports.seeStudentActivity = async (req,res,next) =>{
         case 3:
             //planificar Sprint
             const allowedViewsPlan = {
-                [TeamRole.Developer]: ['Instrucciones','verHUs','manual_Dev', 'sprintVisual'],
-                [TeamRole.ScrumMaster]: ['verHUs','manual_SM','sprintVisual'],
-                [TeamRole.ProductOwner]: ['Necesidades','verHUs','manual_PO','sprintVisual']
+                [TeamRole.Developer]: ['Manuales','verHUs','Instrucciones_Dev', 'sprintVisual'],
+                [TeamRole.ScrumMaster]: ['verHUs','Instrucciones_SM','sprintVisual'],
+                [TeamRole.ProductOwner]: ['Necesidades','verHUs','Instrucciones_PO','sprintVisual']
             };
             if(view && !allowedViewsPlan[role]?.some(p=> p.includes(view))){
                 return res.status(404).send();           
@@ -162,9 +162,9 @@ exports.seeStudentActivity = async (req,res,next) =>{
         case 4:
             //ejecucion Sprint
             const allowedViewsEjecution = {
-                [TeamRole.Developer]: ['Instrucciones','verHUs','manual_Dev', 'sprintVisual'],
-                [TeamRole.ScrumMaster]: ['verHUs','manual_SM','sprintVisual'],
-                [TeamRole.ProductOwner]: ['Necesidades','verHUs','manual_PO','sprintVisual']
+                [TeamRole.Developer]: ['Manuales','verHUs','Instrucciones_Dev', 'sprintVisual'],
+                [TeamRole.ScrumMaster]: ['verHUs','Instrucciones_SM','sprintVisual'],
+                [TeamRole.ProductOwner]: ['Necesidades','verHUs','Instrucciones_PO','sprintVisual']
             };
             if(view && !allowedViewsEjecution[role]?.some(p=> p.includes(view))){
                 return res.status(404).send();           
@@ -180,9 +180,9 @@ exports.seeStudentActivity = async (req,res,next) =>{
         case 5:
             //Revision
             const allowedViewsReview = {
-                [TeamRole.Developer]: ['Instrucciones','manual_Dev', 'sprintVisual'],
-                [TeamRole.ScrumMaster]: ['manual_SM','sprintVisual'],
-                [TeamRole.ProductOwner]: ['Necesidades','manual_PO','sprintVisual']
+                [TeamRole.Developer]: ['Manuales','Instrucciones_Dev', 'sprintVisual'],
+                [TeamRole.ScrumMaster]: ['Instrucciones_SM','sprintVisual'],
+                [TeamRole.ProductOwner]: ['Necesidades','Instrucciones_PO','sprintVisual']
             };
             if(view && !allowedViewsReview[role]?.some(p=> p.includes(view))){
                 return res.status(404).send();           
@@ -199,9 +199,9 @@ exports.seeStudentActivity = async (req,res,next) =>{
         case 6:
             //Retrospectiva
             const allowedViewsR = {
-                [TeamRole.Developer]: ['Instrucciones','manual_Dev', 'Retrospectiva'],
-                [TeamRole.ScrumMaster]: ['manual_SM','Retrospectiva'],
-                [TeamRole.ProductOwner]: ['Necesidades','manual_PO','Retrospectiva']
+                [TeamRole.Developer]: ['Manuales','Instrucciones_Dev', 'Retrospectiva'],
+                [TeamRole.ScrumMaster]: ['Instrucciones_SM','Retrospectiva'],
+                [TeamRole.ProductOwner]: ['Necesidades','Instrucciones_PO','Retrospectiva']
             };
             if(view && !allowedViewsR[role]?.some(p=> p.includes(view))){
                 return res.status(404).send();           
@@ -397,6 +397,8 @@ exports.addResultSprint = async(req,res)=>{
 
                     await hu.addResult(result);
                     return res.status(200).send();
+            }else{
+                return res.status(409).send();
             }
             
         }
