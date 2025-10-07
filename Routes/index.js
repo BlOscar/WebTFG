@@ -36,8 +36,7 @@ router.get('/menu', passport.authenticate('jwt', {session: false}), userRoute.ge
 
 
 router.post('/api/login', userRoute.login);
-router.post('/api/adminRegister',(req,res,next)=>{ const {role} = req.body
-if(role != 'alumno' || role != null) res.status(401).send();}, userRoute.register);
+router.post('/api/adminRegister',passport.authenticate('jwt', {session: false}),verifyRole('profesor'), userRoute.register);
 router.post('/api/register', userRoute.register);
 router.get('/logout', (req,res,next)=>{
     res.clearCookie("token");

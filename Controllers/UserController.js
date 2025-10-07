@@ -4,6 +4,7 @@ const {Team} = require('../Models/Team');
 
 const {Sprint} = require('../Models/Sprint');
 const {Result} = require('../Models/Result');
+const {UserRole} = require('../enums/userRoles');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -25,7 +26,12 @@ exports.register = (async (req,res,next) =>{
                     return res.status(400).json({error: "debes de tener un usuario y contraseña"});
                 }
                 const handlePassword = await bcrypt.hash(password,10);
-                const user = await User.create({username,name,email,password: handlePassword, role});
+                if(role === UserRole.Teacher && req.user !== null){
+                    const user = await User.create({username,name,email,password: handlePassword, role: UserRole.Teacher});
+
+                }else{
+                    const user = await User.create({username,name,email,password: handlePassword, role: UserRole.Student});
+                }
                 console.log(`Usuario creado con email ${email} y username: ${username}`);
                 return res.status(200).send();
             }else

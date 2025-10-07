@@ -16,7 +16,7 @@ document.getElementById("register-form").addEventListener("submit",async (e)=>{
             name,
             email,
             password,
-            role
+            role: 'alumno'
         })
     });
 if(res.ok){

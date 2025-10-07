@@ -1,6 +1,8 @@
 const { Sequelize, DataTypes, STRING } = require('sequelize');
 const {UserRole} = require('../enums/userRoles');
 const sequelize = new Sequelize("sqlite:db.sqlite", { logging: false });
+const bcrypt = require('bcrypt');
+
 
 const User = sequelize.define('user',{
     username: 
@@ -36,7 +38,7 @@ const User = sequelize.define('user',{
             await User.create(
                 {name: "Profe", username:"Profe", email: "profe@gmail.com", password: password, role: UserRole.Teacher }
             );
-            console.log(`DB filled with ${c.length} user.`);
+            console.log(`DB filled with a teacher user.`);
         } 
     } catch (err) {
         console.log(err);
